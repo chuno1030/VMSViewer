@@ -5,6 +5,10 @@ VisualStudioVersion = 16.0.30225.117
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VMSViewer", "VMSViewer\VMSViewer.csproj", "{F54A3F40-09EE-4BC6-82CA-4FCB07839DE3}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VMSViewer.Module", "VMSViewer.Module\VMSViewer.Module.csproj", "{5FD6379F-C5B9-48B1-A1A6-C7131460B3C0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VMSViewer.Theme", "VMSViewer.Theme\VMSViewer.Theme.csproj", "{59448A4A-8347-4EAF-93C7-3137C6B60141}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +19,14 @@ Global
 		{F54A3F40-09EE-4BC6-82CA-4FCB07839DE3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F54A3F40-09EE-4BC6-82CA-4FCB07839DE3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F54A3F40-09EE-4BC6-82CA-4FCB07839DE3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5FD6379F-C5B9-48B1-A1A6-C7131460B3C0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5FD6379F-C5B9-48B1-A1A6-C7131460B3C0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5FD6379F-C5B9-48B1-A1A6-C7131460B3C0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5FD6379F-C5B9-48B1-A1A6-C7131460B3C0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{59448A4A-8347-4EAF-93C7-3137C6B60141}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{59448A4A-8347-4EAF-93C7-3137C6B60141}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{59448A4A-8347-4EAF-93C7-3137C6B60141}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{59448A4A-8347-4EAF-93C7-3137C6B60141}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
