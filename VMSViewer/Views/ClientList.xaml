@@ -1,0 +1,35 @@
+﻿<UserControl x:Class="VMSViewer.ClientList"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:VMSViewer"
+             mc:Ignorable="d" 
+             Height="1080" Width="250"
+             Loaded="UserControl_Loaded">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="270"/>
+            <RowDefinition Height="270"/>
+            <RowDefinition Height="270"/>
+            <RowDefinition Height="270"/>
+        </Grid.RowDefinitions>
+        
+        <Grid Grid.Row="0" Background="Red">
+
+        </Grid>
+
+        <Grid Grid.Row="1" Background="Orange">
+
+        </Grid>
+
+        <Grid Grid.Row="2" Background="Yellow">
+
+        </Grid>
+
+        <Grid Grid.Row="3" Background="Green">
+
+        </Grid>
+    </Grid>
+    
+</UserControl>

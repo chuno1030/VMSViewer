@@ -5,10 +5,41 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:VMSViewer"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800"
-        WindowStartupLocation="CenterScreen"
-        Loaded="Window_Loaded" Closing="Window_Closing">
+        Title="MainWindow" Height="1080" Width="1920" MinWidth="1024" MinHeight="768"
+        WindowStartupLocation="CenterScreen" WindowStyle="None" WindowState="Maximized"
+        ResizeMode="CanResizeWithGrip"
+        Loaded="Window_Loaded" Closing="Window_Closing"
+        Background="{DynamicResource BackGround_Color}">
     <Grid>
-        
+        <Grid.RowDefinitions>
+            <RowDefinition Height="30"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <Grid Grid.Row="0" x:Name="topGrid" Background="#384A55" MouseDown="topGrid_MouseDown">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,0,5,0">
+                <Button x:Name="btnMinimize"
+                        Tag="1"
+                        Width="30"
+                        Height="25"
+                        Click="btnClick"/>
+
+                <Button x:Name="btnMaxmize"
+                        Tag="2"
+                        Width="30"
+                        Height="25"
+                        Click="btnClick"/>
+
+                <Button x:Name="btnClose"
+                        Tag="3"
+                        Width="30"
+                        Height="25"
+                        Click="btnClick"/>
+            </StackPanel>
+        </Grid>
+
+        <Grid Grid.Row="1" x:Name="mainGrid">
+            <local:ClientList HorizontalAlignment="Left"/>
+        </Grid>
     </Grid>
 </Window>

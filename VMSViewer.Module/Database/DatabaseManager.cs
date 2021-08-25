@@ -2,8 +2,6 @@
 using System.Linq;
 using System.Collections.Generic;
 
-using MySql.Data.MySqlClient;
-
 namespace VMSViewer.Module
 {
     public class DatabaseManager
@@ -31,13 +29,7 @@ namespace VMSViewer.Module
 
             try
             {
-                using (MySqlConnection conn = new MySqlConnection())
-                {
-                    using (MySqlCommand cmd = new MySqlCommand(query, conn))
-                    {
-                        cmd.Connection.Open();
-                    }
-                }
+                
             }
             catch (Exception ee)
             {

@@ -10,7 +10,7 @@ namespace VMSViewer
     {
         private void Application_Startup(object sender, StartupEventArgs e)
         {
-            WindowManager.Shared.ShowLoginWindow();
+            //WindowManager.Shared.ShowLoginWindow();
 
 
 
