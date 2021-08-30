@@ -25,6 +25,11 @@ namespace VMSViewer
         /// </summary>
         private LoginWindow LoginWindow = null;
 
+        /// <summary>
+        /// 그룹 등록/수정 윈도우
+        /// </summary>
+        private EditClientGroupWindow EditClientGroupWindow = null;
+
         public WindowManager()
         {
 
@@ -51,6 +56,27 @@ namespace VMSViewer
 
             GC.Collect();
         }
+
         #endregion
+        public void ShowEditClientGroupWindow()
+        {
+            if (EditClientGroupWindow == null)
+            {
+                EditClientGroupWindow = new EditClientGroupWindow();
+                EditClientGroupWindow.Closed += EditClientGroupWindow_Closed;
+                EditClientGroupWindow.Show();
+            }
+        }
+
+        private void EditClientGroupWindow_Closed(object sender, EventArgs e)
+        {
+            if (EditClientGroupWindow != null)
+            {
+                EditClientGroupWindow.Closed -= EditClientGroupWindow_Closed;
+                EditClientGroupWindow = null;
+            }
+
+            GC.Collect();
+        }
     }
 }

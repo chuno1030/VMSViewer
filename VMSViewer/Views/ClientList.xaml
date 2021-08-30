@@ -8,28 +8,18 @@
              Height="1080" Width="250"
              Loaded="UserControl_Loaded">
     <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="270"/>
-            <RowDefinition Height="270"/>
-            <RowDefinition Height="270"/>
-            <RowDefinition Height="270"/>
-        </Grid.RowDefinitions>
-        
-        <Grid Grid.Row="0" Background="Red">
+        <ScrollViewer x:Name="svClientList"
+                      HorizontalScrollBarVisibility="Disabled">
+            <ScrollViewer.ContextMenu>
+                <ContextMenu>
+                    <MenuItem Header="그룹추가" Click="MenuItem_Click"/>
+                </ContextMenu>
+            </ScrollViewer.ContextMenu>
 
-        </Grid>
-
-        <Grid Grid.Row="1" Background="Orange">
-
-        </Grid>
-
-        <Grid Grid.Row="2" Background="Yellow">
-
-        </Grid>
-
-        <Grid Grid.Row="3" Background="Green">
-
-        </Grid>
+            <StackPanel x:Name="spClientList" Orientation="Vertical">
+                
+            </StackPanel>
+        </ScrollViewer>
     </Grid>
     
 </UserControl>
