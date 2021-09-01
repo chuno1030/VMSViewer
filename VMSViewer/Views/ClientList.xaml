@@ -16,7 +16,7 @@
                 </ContextMenu>
             </ScrollViewer.ContextMenu>
 
-            <StackPanel x:Name="spClientList" Orientation="Vertical">
+            <StackPanel x:Name="spClientGroupList" Orientation="Vertical">
                 
             </StackPanel>
         </ScrollViewer>

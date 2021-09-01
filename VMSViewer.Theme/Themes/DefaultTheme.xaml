@@ -3,5 +3,9 @@
                     xmlns:local="clr-namespace:VMSViewer.Theme">
 
     <SolidColorBrush x:Key="BackGround_Color" Color="#282C34"/>
+
+    <Style TargetType="{x:Type Expander}">
+        <Setter Property="Foreground" Value="White"/>
+    </Style>
     
 </ResourceDictionary>

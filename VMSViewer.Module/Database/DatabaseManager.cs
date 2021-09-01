@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Collections.Generic;
 
-using MySql.Data.MySqlClient;
+using MySqlConnector;
 
 namespace VMSViewer.Module
 {
@@ -30,10 +30,10 @@ namespace VMSViewer.Module
             {
                 using (MySqlConnection conn = new MySqlConnection(DatebaseInformation.connectionString))
                 {
+                    conn.Open();
+
                     using (MySqlCommand cmd = new MySqlCommand(query, conn))
                     {
-                        conn.Open();
-
                         using (MySqlDataReader rdr = cmd.ExecuteReader())
                         {
                             while (rdr.Read())
@@ -82,6 +82,57 @@ namespace VMSViewer.Module
             {
                 Console.WriteLine(ee.Message);
 
+                return false;
+            }
+        }
+
+        public bool UDPATE_TB_ClientGroup(ClientGroup UpdateClientGroup)
+        {
+            string query = $"UPDATE TB_CLIENTGROUP SET GROUP_NAME = @p1 WHERE GROUP_ID = {UpdateClientGroup.ClientGroupID}";
+
+            try
+            {
+                using (MySqlConnection conn = new MySqlConnection(DatebaseInformation.connectionString))
+                {
+                    using (MySqlCommand cmd = new MySqlCommand(query, conn))
+                    {
+                        conn.Open();
+
+                        cmd.Parameters.AddWithValue("@p1", UpdateClientGroup.ClientGroupName);
+                        cmd.ExecuteNonQuery();
+                    }
+                }
+
+                return true;
+            }
+            catch (Exception ee)
+            {
+                Console.WriteLine(ee.Message);
+
+                return false;
+            }
+        }
+
+        public bool DELETE_TB_ClientGroup(ClientGroup DeleteClientGroup)
+        {
+            string query = $"DELETE FROM TB_CLIENTGROUP WHERE GROUP_ID = {DeleteClientGroup.ClientGroupID}";
+
+            try
+            {
+                using (MySqlConnection conn = new MySqlConnection(DatebaseInformation.connectionString))
+                {
+                    using (MySqlCommand cmd = new MySqlCommand(query, conn))
+                    {
+                        conn.Open();
+                        cmd.ExecuteNonQuery();
+                    }
+                }
+
+                return true;
+            }
+            catch (Exception ee)
+            {
+                Console.WriteLine(ee.Message);
                 return false;
             }
         }
