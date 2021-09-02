@@ -62,9 +62,7 @@ namespace VMSViewer
                 System.Windows.MessageBox.Show("비밀번호를 입력해주세요.", "로그인", MessageBoxButton.OK, MessageBoxImage.Exclamation);
                 return;
             }
-
-            DatabaseManager.Shared.IsAccount(LoginID, LoginPassword);
-        }
+                    }
 
         private void btnClick(object sender, RoutedEventArgs e)
         {

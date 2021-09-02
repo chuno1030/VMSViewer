@@ -24,9 +24,26 @@ namespace VMSViewer
             EventManager.onRefreshClientGroup += EventManager_onRefreshClientGroup;
         }
 
-        private void EventManager_onRefreshClientGroup(int RefreshID = -1)
+        private void EventManager_onRefreshClientGroup(ClientGroup RefreshClientGroup)
         {
-            if (RefreshID == -1) GetClientGroupList();
+            Expander RefreshExpander = null;
+
+            foreach (UIElement item in spClientGroupList.Children)
+            {
+                Expander expander = item as Expander;
+
+                if (expander == null) return;
+                if (expander.Tag == null) return;
+
+                ClientGroup ClientGroup = (ClientGroup)expander.Tag;
+
+                if (ClientGroup == null || ClientGroup is ClientGroup == false) continue;
+                if (RefreshClientGroup.ClientGroupID != ClientGroup.ClientGroupID) continue;
+
+                RefreshExpander = expander;
+            }
+
+            RefreshExpander.Header = RefreshClientGroup.ClientGroupName.Trim();
         }
 
         private void InitProc()
@@ -61,16 +78,16 @@ namespace VMSViewer
 
                 MenuItem menuItem1 = new MenuItem();
                 menuItem1.Tag = ClientGroup.ClientGroupID;
-                menuItem1.Header = "장치추가";
+                menuItem1.Header = "장치생성";
                 menuItem1.Click += Expander_MenuItem_AddClient_Click;
 
                 MenuItem menuItem2 = new MenuItem();
-                menuItem2.Tag = ClientGroup.ClientGroupID;
+                menuItem2.Tag = ClientGroup;
                 menuItem2.Header = "그룹편집";
                 menuItem2.Click += Expander_MenuItem_Edit_Click;
 
                 MenuItem menuItem3 = new MenuItem();
-                menuItem3.Tag = ClientGroup.ClientGroupID;
+                menuItem3.Tag = ClientGroup;
                 menuItem3.Header = "그룹삭제";
                 menuItem3.Click += Expander_MenuItem_Remove_Click;
                 
@@ -104,7 +121,14 @@ namespace VMSViewer
 
         private void Expander_MenuItem_AddClient_Click(object sender, RoutedEventArgs e)
         {
+            MenuItem menuItem = sender as MenuItem;
 
+            if (menuItem == null) return;
+            if (menuItem.Tag == null) return;
+
+            int GroupID = Convert.ToInt32(menuItem.Tag);
+
+            WindowManager.Shared.ShowEditClientWindow(GroupID);
         }
 
         private void Expander_MenuItem_Edit_Click(object sender, RoutedEventArgs e)
@@ -114,7 +138,9 @@ namespace VMSViewer
             if (menuItem == null) return;
             if (menuItem.Tag == null) return;
 
-            int Tag = Convert.ToInt32(menuItem.Tag);
+            ClientGroup EditClientGroup = (ClientGroup)menuItem.Tag;
+
+            WindowManager.Shared.ShowEditClientGroupWindow(EditClientGroup);
         }
 
         private void Expander_MenuItem_Remove_Click(object sender, RoutedEventArgs e)
@@ -126,9 +152,9 @@ namespace VMSViewer
                 if (menuItem == null) return;
                 if (menuItem.Tag == null) return;
 
-                int RemoveGroupID = Convert.ToInt32(menuItem.Tag);
+                ClientGroup RemoveClientGroup = (ClientGroup)menuItem.Tag;
 
-                RemoveGroupList(RemoveGroupID);
+                RemoveGroupList(RemoveClientGroup);
             }
         }
 
@@ -151,9 +177,11 @@ namespace VMSViewer
 
         }
 
-        private void RemoveGroupList(int RemoveGroupID)
+        /// <summary>
+        /// 그룹삭제
+        /// </summary>
+        private void RemoveGroupList(ClientGroup RemoveClientGroup)
         {
-            /* 제거할 Expander */
             Expander RemoveExpander = null;
 
             foreach (UIElement item in spClientGroupList.Children)
@@ -166,7 +194,7 @@ namespace VMSViewer
                 ClientGroup ClientGroup = (ClientGroup)expander.Tag;
 
                 if (ClientGroup == null || ClientGroup is ClientGroup == false) continue;
-                if (RemoveGroupID != ClientGroup.ClientGroupID) continue;
+                if (RemoveClientGroup.ClientGroupID != ClientGroup.ClientGroupID) continue;
 
                 RemoveExpander = expander;
             }

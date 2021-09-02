@@ -26,9 +26,14 @@ namespace VMSViewer
         private LoginWindow LoginWindow = null;
 
         /// <summary>
-        /// 그룹 등록/수정 윈도우
+        /// 그룹 생성/수정 윈도우
         /// </summary>
         private EditClientGroupWindow EditClientGroupWindow = null;
+
+        /// <summary>
+        /// 장치 생성/수정 윈도우
+        /// </summary>
+        private EditClientWindow EditClientWindow = null;
 
         public WindowManager()
         {
@@ -58,11 +63,12 @@ namespace VMSViewer
         }
 
         #endregion
-        public void ShowEditClientGroupWindow()
+
+        public void ShowEditClientGroupWindow(ClientGroup ClientGroup = null)
         {
             if (EditClientGroupWindow == null)
             {
-                EditClientGroupWindow = new EditClientGroupWindow();
+                EditClientGroupWindow = new EditClientGroupWindow(ClientGroup);
                 EditClientGroupWindow.Closed += EditClientGroupWindow_Closed;
                 EditClientGroupWindow.Show();
             }
@@ -74,6 +80,27 @@ namespace VMSViewer
             {
                 EditClientGroupWindow.Closed -= EditClientGroupWindow_Closed;
                 EditClientGroupWindow = null;
+            }
+
+            GC.Collect();
+        }
+
+        public void ShowEditClientWindow(int ClientGroupID, Client Client = null)
+        {
+            if (EditClientWindow == null)
+            {
+                EditClientWindow = new EditClientWindow(ClientGroupID, Client);
+                EditClientWindow.Closed += EditClientWindow_Closed;
+                EditClientWindow.Show();
+            }
+        }
+
+        private void EditClientWindow_Closed(object sender, EventArgs e)
+        {
+            if (EditClientWindow != null)
+            {
+                EditClientWindow.Closed -= EditClientWindow_Closed;
+                EditClientWindow = null;
             }
 
             GC.Collect();

@@ -12,7 +12,7 @@
                       HorizontalScrollBarVisibility="Disabled">
             <ScrollViewer.ContextMenu>
                 <ContextMenu>
-                    <MenuItem Header="그룹추가" Click="MenuItem_Click"/>
+                    <MenuItem Header="그룹생성" Click="MenuItem_Click"/>
                 </ContextMenu>
             </ScrollViewer.ContextMenu>
 

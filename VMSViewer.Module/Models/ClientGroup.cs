@@ -6,18 +6,17 @@ namespace VMSViewer
     public class ClientGroup
     {
         /// <summary>
-        /// 클라이언트 그룹 아이디
+        /// 장치그룹 ID
         /// </summary>
         public int ClientGroupID { get; set; }
 
         /// <summary>
-        /// 클라이언트 그룹 이름
+        /// 장치그룹명
         /// </summary>
         public string ClientGroupName { get; set; }
 
         public ClientGroup()
         {
-
         }
     }
 }

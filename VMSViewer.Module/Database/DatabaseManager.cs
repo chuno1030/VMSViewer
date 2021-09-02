@@ -21,6 +21,7 @@ namespace VMSViewer.Module
             }
         }
 
+        #region TB_ClientGroup(SELECT/INSERT/UPDATE/DELETE)
         public List<ClientGroup> SELECT_TB_ClientGroup()
         {
             string query = "SELECT * FROM TB_ClientGroup";
@@ -86,7 +87,7 @@ namespace VMSViewer.Module
             }
         }
 
-        public bool UDPATE_TB_ClientGroup(ClientGroup UpdateClientGroup)
+        public bool UPDATE_TB_ClientGroup(ClientGroup UpdateClientGroup)
         {
             string query = $"UPDATE TB_CLIENTGROUP SET GROUP_NAME = @p1 WHERE GROUP_ID = {UpdateClientGroup.ClientGroupID}";
 
@@ -136,24 +137,153 @@ namespace VMSViewer.Module
                 return false;
             }
         }
+        #endregion
 
-        public bool IsAccount(string LoginID, string LoginPassword)
+        #region TB_Client(SELECT/INSERT/UPDATE/DELETE)
+        public List<ClientGroup> SELECT_TB_Client()
         {
-            return true;
-
-            ///추후 작업
-
-            string query = $"SELECT COUNT(*) FROM TB_USER WHERE ID = {LoginID} AND PASSWORD = {LoginPassword}";
+            string query = "SELECT * FROM TB_Client";
+            List<ClientGroup> ClientGroupList = new List<ClientGroup>();
 
             try
             {
-                
+                using (MySqlConnection conn = new MySqlConnection(DatebaseInformation.connectionString))
+                {
+                    conn.Open();
+
+                    using (MySqlCommand cmd = new MySqlCommand(query, conn))
+                    {
+                        using (MySqlDataReader rdr = cmd.ExecuteReader())
+                        {
+                            while (rdr.Read())
+                            {
+
+                            }
+                        }
+                    }
+                }
+
+                return ClientGroupList;
             }
             catch (Exception ee)
             {
+                Console.WriteLine(ee.StackTrace);
+                Console.WriteLine($"### {ee.Message} ###");
+                return null;
+            }
+        }
+
+        public bool INSERT_TB_Client(Client NewClient)
+        {
+            string query = "INSERT INTO TB_CLIENT(GROUP_ID, CLIENT_NAME, CLIENT_IP, RTSP_ADDRESS) VALUES(@p1, @p2, @p3, @p4)";
+
+            try
+            {
+                using (MySqlConnection conn = new MySqlConnection(DatebaseInformation.connectionString))
+                {
+                    using (MySqlCommand cmd = new MySqlCommand(query, conn))
+                    {
+                        conn.Open();
+
+                        cmd.Parameters.AddWithValue("@p1", NewClient.ClientGroupID);
+                        cmd.Parameters.AddWithValue("@p2", NewClient.ClientName);
+                        cmd.Parameters.AddWithValue("@p3", NewClient.ClientIP);
+                        cmd.Parameters.AddWithValue("@p4", NewClient.RTSPAddress);
+                        cmd.ExecuteNonQuery();
+                    }
+                }
+
+                return true;
+            }
+            catch (Exception ee)
+            {
+                Console.WriteLine(ee.Message);
 
                 return false;
             }
         }
+
+        //public bool IsUseClientName(Client NewClient)
+        //{
+        //    bool IsUseClientName = false;
+        //    string query = $"SELECT COUNT(*) FROM TB_CLIENT WHERE ";
+
+        //    try
+        //    {
+        //        using (MySqlConnection conn = new MySqlConnection(DatebaseInformation.connectionString))
+        //        {
+        //            using (MySqlCommand cmd = new MySqlCommand(query, conn))
+        //            {
+        //                conn.Open();
+
+        //                cmd.Parameters.AddWithValue("@p1", NewClient.ClientGroupID);
+        //                cmd.Parameters.AddWithValue("@p2", NewClient.ClientName);
+        //                cmd.Parameters.AddWithValue("@p3", NewClient.ClientIP);
+        //                cmd.Parameters.AddWithValue("@p4", NewClient.RTSPAddress);
+        //                cmd.ExecuteNonQuery();
+        //            }
+        //        }
+
+        //        return IsUseClientName;
+        //    }
+        //    catch (Exception ee)
+        //    {
+        //        Console.WriteLine(ee.Message);
+
+        //        return false;
+        //    }
+        //}
+
+        public bool UPDATE_TB_Client(Client UpdateClient)
+        {
+            string query = $"UPDATE TB_CLIENT SET GROUP_NAME = @p1 WHERE GROUP_ID = {UpdateClient.ClientGroupID}";
+
+            try
+            {
+                using (MySqlConnection conn = new MySqlConnection(DatebaseInformation.connectionString))
+                {
+                    using (MySqlCommand cmd = new MySqlCommand(query, conn))
+                    {
+                        conn.Open();
+
+                        cmd.Parameters.AddWithValue("@p1", UpdateClient.ClientName);
+                        cmd.ExecuteNonQuery();
+                    }
+                }
+
+                return true;
+            }
+            catch (Exception ee)
+            {
+                Console.WriteLine(ee.Message);
+
+                return false;
+            }
+        }
+
+        public bool DELETE_TB_Client(ClientGroup DeleteClient)
+        {
+            string query = $"DELETE FROM TB_CLIENT WHERE CLIENT_ID = {DeleteClient.ClientGroupID}";
+
+            try
+            {
+                using (MySqlConnection conn = new MySqlConnection(DatebaseInformation.connectionString))
+                {
+                    using (MySqlCommand cmd = new MySqlCommand(query, conn))
+                    {
+                        conn.Open();
+                        cmd.ExecuteNonQuery();
+                    }
+                }
+
+                return true;
+            }
+            catch (Exception ee)
+            {
+                Console.WriteLine(ee.Message);
+                return false;
+            }
+        }
+        #endregion
     }
 }
