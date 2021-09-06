@@ -21,7 +21,58 @@ namespace VMSViewer
         {
             InitProc();
 
+            EventManager.onRefreshClient += EventManager_onRefreshClient;
             EventManager.onRefreshClientGroup += EventManager_onRefreshClientGroup;
+        }
+
+        private void EventManager_onRefreshClient(Client RefreshClient = null)
+        {
+            ListBox TargetClientList = null;
+            ListBoxItem TargetClient = null;
+
+            foreach (UIElement item in spClientGroupList.Children)
+            {
+                Expander expander = item as Expander;
+
+                if (expander == null) continue;
+                if (expander.Tag == null) continue;
+
+                ClientGroup ClientGroup = (ClientGroup)expander.Tag;
+
+                if (ClientGroup == null || ClientGroup is ClientGroup == false) continue;
+                if (ClientGroup.ClientGroupID != RefreshClient.ClientGroupID) continue;
+
+                TargetClientList = (ListBox)expander.Content;
+            }
+
+            if (TargetClientList == null)
+            {
+                System.Windows.MessageBox.Show("편집에 실패했습니다.", "장치편집", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+
+            foreach (ListBoxItem item in TargetClientList.Items)
+            {
+                if (item.Tag == null) continue;
+                if (item.Tag is Client == false) continue;
+
+                Client client = (Client)item.Tag;
+
+                if (client == null) continue;
+
+                if (client.ClientID != RefreshClient.ClientID) continue;
+
+                TargetClient = item;
+            }
+
+            if (TargetClient == null)
+            {
+                System.Windows.MessageBox.Show("편집에 실패했습니다.", "장치편집", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+
+            TargetClient.Tag = RefreshClient;
+            TargetClient.Content = RefreshClient.ClientName;
         }
 
         private void EventManager_onRefreshClientGroup(ClientGroup RefreshClientGroup)
@@ -32,8 +83,9 @@ namespace VMSViewer
             {
                 Expander expander = item as Expander;
 
-                if (expander == null) return;
-                if (expander.Tag == null) return;
+                if (expander == null) continue;
+                if (expander.Tag == null) continue;
+                if (RefreshClientGroup == null) continue;
 
                 ClientGroup ClientGroup = (ClientGroup)expander.Tag;
 
@@ -43,6 +95,7 @@ namespace VMSViewer
                 RefreshExpander = expander;
             }
 
+            RefreshExpander.Tag = RefreshClientGroup;
             RefreshExpander.Header = RefreshClientGroup.ClientGroupName.Trim();
         }
 
@@ -70,10 +123,8 @@ namespace VMSViewer
             foreach (var ClientGroup in ClientGroupList)
             {
                 Expander expander = new Expander();
-                expander.Height = 30;
                 expander.Tag = ClientGroup;
                 expander.Header = ClientGroup.ClientGroupName;
-
                 expander.ContextMenu = new ContextMenu();
 
                 MenuItem menuItem1 = new MenuItem();
@@ -96,22 +147,36 @@ namespace VMSViewer
                 expander.ContextMenu.Items.Add(menuItem2);
                 expander.ContextMenu.Items.Add(menuItem3);
 
-                //List<Client> ClientList = GetClientList(ClientGroup.ClientGroupID);
+                List<Client> ClientList = DatabaseManager.Shared.SELECT_TB_Client(ClientGroup);
 
-                //if (ClientList != null || ClientList.Count > 0)
-                //{
-                //    ListBox listBox = new ListBox();
-                //    listBox.AllowDrop = true;
-                //    listBox.ContextMenu = new ContextMenu();
-                //}
+                if (ClientList != null && ClientList.Count > 0)
+                {
+                    ListBox listBox = new ListBox();
+                    listBox.AllowDrop = true;
+                    listBox.ContextMenu = new ContextMenu();
+
+                    foreach (var Client in ClientList)
+                    {
+                        ListBoxItem listBoxItem = new ListBoxItem() { Content = Client.ClientName, Tag = Client };
+                        listBoxItem.ContextMenu = new ContextMenu();
+
+                        MenuItem menuItem4 = new MenuItem() { Header = "장치편집", Tag = Client };
+                        menuItem4.Click += Client_MenuItem_Edit_Click;
+
+                        MenuItem menuItem5 = new MenuItem() { Header = "장치삭제", Tag = Client };
+                        menuItem5.Click += Client_MenuItem_Remove_Click;
+
+                        listBoxItem.ContextMenu.Items.Add(menuItem4);
+                        listBoxItem.ContextMenu.Items.Add(menuItem5);
+
+                        listBox.Items.Add(listBoxItem);
+                    }
+
+                    expander.Content = listBox;
+                }
 
                 spClientGroupList.Children.Add(expander);
             }
-        }
-
-        private List<Client> GetClientList(int Group_ID)
-        {
-            return null;
         }
 
         private void MenuItem_Click(object sender, RoutedEventArgs e)
@@ -158,6 +223,33 @@ namespace VMSViewer
             }
         }
 
+        private void Client_MenuItem_Edit_Click(object sender, EventArgs e)
+        {
+            MenuItem menuItem = sender as MenuItem;
+
+            if (menuItem == null) return;
+            if (menuItem.Tag == null) return;
+
+            Client EditClient = (Client)menuItem.Tag;
+
+            WindowManager.Shared.ShowEditClientWindow(EditClient.ClientGroupID, EditClient);
+        }
+
+        private void Client_MenuItem_Remove_Click(object sender, EventArgs e)
+        {
+            MenuItem menuItem = sender as MenuItem;
+
+            if (menuItem == null) return;
+            if (menuItem.Tag == null) return;
+
+            Client RemoveClient = (Client)menuItem.Tag;
+
+            if (DatabaseManager.Shared.DELETE_TB_Client(RemoveClient))
+                RemoveClientList(RemoveClient);
+            else
+                System.Windows.MessageBox.Show("삭제에 실패했습니다.", "장치삭제", MessageBoxButton.OK, MessageBoxImage.Error);
+        }
+
         private void ClearGroupList()
         {
             foreach (UIElement item in spClientGroupList.Children)
@@ -172,11 +264,6 @@ namespace VMSViewer
             spClientGroupList.Children.Clear();
         }
 
-        private void ClearClientList()
-        {
-
-        }
-
         /// <summary>
         /// 그룹삭제
         /// </summary>
@@ -188,8 +275,8 @@ namespace VMSViewer
             {
                 Expander expander = item as Expander;
 
-                if (expander == null) return;
-                if (expander.Tag == null) return;
+                if (expander == null) continue;
+                if (expander.Tag == null) continue;
 
                 ClientGroup ClientGroup = (ClientGroup)expander.Tag;
 
@@ -203,6 +290,55 @@ namespace VMSViewer
                 spClientGroupList.Children.Remove(RemoveExpander);
             else
                 System.Windows.MessageBox.Show("삭제에 실패했습니다.", "그룹삭제", MessageBoxButton.OK, MessageBoxImage.Error);
+        }
+
+        private void RemoveClientList(Client RemoveClient)
+        {
+            ListBox TargetClientList = null;
+            ListBoxItem TargetClient = null;
+
+            foreach (UIElement item in spClientGroupList.Children)
+            {
+                Expander expander = item as Expander;
+
+                if (expander == null) continue;
+                if (expander.Tag == null) continue;
+
+                ClientGroup ClientGroup = (ClientGroup)expander.Tag;
+
+                if (ClientGroup == null || ClientGroup is ClientGroup == false) continue;
+                if (ClientGroup.ClientGroupID != RemoveClient.ClientGroupID) continue;
+
+                TargetClientList = (ListBox)expander.Content;
+            }
+
+            if (TargetClientList == null)
+            {
+                System.Windows.MessageBox.Show("삭제에 실패했습니다.", "장치삭제", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+
+            foreach (ListBoxItem item in TargetClientList.Items)
+            {
+                if (item.Tag == null) continue;
+                if (item.Tag is Client == false) continue;
+
+                Client client = (Client)item.Tag;
+
+                if (client == null) continue;
+
+                if (client.ClientID != RemoveClient.ClientID) continue;
+
+                TargetClient = item;
+            }
+
+            if (TargetClient == null)
+            {
+                System.Windows.MessageBox.Show("삭제에 실패했습니다.", "장치삭제", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+
+            TargetClientList.Items.Remove(TargetClient);
         }
     }
 }

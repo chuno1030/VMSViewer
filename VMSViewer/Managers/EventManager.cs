@@ -10,5 +10,12 @@ namespace VMSViewer
         {
             if (onRefreshClientGroup != null) onRefreshClientGroup(RefreshClientGroup);
         }
+
+        public delegate void RefreshClientDelegate(Client RefreshClient = null);
+        public static event RefreshClientDelegate onRefreshClient;
+        public static void RefreshClientEvent(Client RefreshClient = null)
+        {
+            if (onRefreshClient != null) onRefreshClient(RefreshClient);
+        }
     }
 }

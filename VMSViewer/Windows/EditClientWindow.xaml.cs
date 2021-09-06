@@ -50,14 +50,14 @@ namespace VMSViewer
 
         private void InitProc()
         {
-            if (Client != null && ClientGroupID != Client.ClientGroupID)
-            { 
-                System.Windows.MessageBox.Show("장치그룹ID와 장치ID가 일치하지 않습니다.", "장치수정", MessageBoxButton.OK, MessageBoxImage.Error);
-                this.Close();
-            }
-
             if (IsEdit)
             {
+                if (Client != null && ClientGroupID != Client.ClientGroupID)
+                { 
+                    System.Windows.MessageBox.Show("장치그룹ID와 장치ID가 일치하지 않습니다.", "장치수정", MessageBoxButton.OK, MessageBoxImage.Error);
+                    this.Close();
+                }
+
                 this.Title = "장치수정";
 
                 txtClientName.Text = Client.ClientName.Trim();
@@ -79,7 +79,7 @@ namespace VMSViewer
 
                 if (DatabaseManager.Shared.UPDATE_TB_Client(EditClient))
                 {
-
+                    EventManager.RefreshClientEvent(EditClient);
                 }
                 else
                     System.Windows.MessageBox.Show("수정에 실패했습니다.", "장치수정", MessageBoxButton.OK, MessageBoxImage.Error);
@@ -91,12 +91,16 @@ namespace VMSViewer
                 NewClient.ClientName = txtClientName.Text.Trim();
                 NewClient.RTSPAddress = txtRTSPAddress.Text.Trim();
 
-                if (DatabaseManager.Shared.INSERT_TB_Client(NewClient))
+                if(DatabaseManager.Shared.IsUseClientName(NewClient) == false)
                 {
-
+                    if (DatabaseManager.Shared.INSERT_TB_Client(NewClient))
+                    {
+                    }
+                    else
+                        System.Windows.MessageBox.Show("생성에 실패했습니다.", "장치생성", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
                 else
-                    System.Windows.MessageBox.Show("생성에 실패했습니다.", "장치생성", MessageBoxButton.OK, MessageBoxImage.Error);
+                    System.Windows.MessageBox.Show("입력하신 장치명은 해당 그룹에서 사용 중입니다.", "장치생성", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
     }

@@ -29,6 +29,8 @@ namespace VMSViewer
         /// </summary>
         public string RTSPAddress { get; set; }
 
+        public Client() { }
+
         public Client(int ClientGroupID)
         {
             this.ClientGroupID = ClientGroupID;

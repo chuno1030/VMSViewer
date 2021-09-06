@@ -42,7 +42,7 @@ namespace VMSViewer.Module
                                 ClientGroup item = new ClientGroup();
 
                                 item.ClientGroupID = Convert.ToInt32(rdr["GROUP_ID"]);
-                                item.ClientGroupName = rdr["GROUP_NAME"].ToString();
+                                item.ClientGroupName = Convert.ToString(rdr["GROUP_NAME"]);
 
                                 ClientGroupList.Add(item);
                             }
@@ -140,10 +140,10 @@ namespace VMSViewer.Module
         #endregion
 
         #region TB_Client(SELECT/INSERT/UPDATE/DELETE)
-        public List<ClientGroup> SELECT_TB_Client()
+        public List<Client> SELECT_TB_Client(ClientGroup ClientGroup)
         {
-            string query = "SELECT * FROM TB_Client";
-            List<ClientGroup> ClientGroupList = new List<ClientGroup>();
+            string query = $"SELECT * FROM TB_Client WHERE GROUP_ID = {ClientGroup.ClientGroupID}";
+            List<Client> ClientList = new List<Client>();
 
             try
             {
@@ -157,13 +157,21 @@ namespace VMSViewer.Module
                         {
                             while (rdr.Read())
                             {
+                                Client item = new Client();
 
+                                item.ClientID = Convert.ToInt32(rdr["CLIENT_ID"]);
+                                item.ClientGroupID = Convert.ToInt32(rdr["GROUP_ID"]);
+                                item.ClientName = Convert.ToString(rdr["CLIENT_NAME"]);
+                                item.ClientIP = Convert.ToString(rdr["CLIENT_IP"]);
+                                item.RTSPAddress = Convert.ToString(rdr["RTSP_ADDRESS"]);
+
+                                ClientList.Add(item);
                             }
                         }
                     }
                 }
 
-                return ClientGroupList;
+                return ClientList;
             }
             catch (Exception ee)
             {
@@ -203,40 +211,9 @@ namespace VMSViewer.Module
             }
         }
 
-        //public bool IsUseClientName(Client NewClient)
-        //{
-        //    bool IsUseClientName = false;
-        //    string query = $"SELECT COUNT(*) FROM TB_CLIENT WHERE ";
-
-        //    try
-        //    {
-        //        using (MySqlConnection conn = new MySqlConnection(DatebaseInformation.connectionString))
-        //        {
-        //            using (MySqlCommand cmd = new MySqlCommand(query, conn))
-        //            {
-        //                conn.Open();
-
-        //                cmd.Parameters.AddWithValue("@p1", NewClient.ClientGroupID);
-        //                cmd.Parameters.AddWithValue("@p2", NewClient.ClientName);
-        //                cmd.Parameters.AddWithValue("@p3", NewClient.ClientIP);
-        //                cmd.Parameters.AddWithValue("@p4", NewClient.RTSPAddress);
-        //                cmd.ExecuteNonQuery();
-        //            }
-        //        }
-
-        //        return IsUseClientName;
-        //    }
-        //    catch (Exception ee)
-        //    {
-        //        Console.WriteLine(ee.Message);
-
-        //        return false;
-        //    }
-        //}
-
         public bool UPDATE_TB_Client(Client UpdateClient)
         {
-            string query = $"UPDATE TB_CLIENT SET GROUP_NAME = @p1 WHERE GROUP_ID = {UpdateClient.ClientGroupID}";
+            string query = $"UPDATE TB_CLIENT SET CLIENT_NAME = @p1 WHERE CLIENT_ID = {UpdateClient.ClientID}";
 
             try
             {
@@ -261,9 +238,9 @@ namespace VMSViewer.Module
             }
         }
 
-        public bool DELETE_TB_Client(ClientGroup DeleteClient)
+        public bool DELETE_TB_Client(Client DeleteClient)
         {
-            string query = $"DELETE FROM TB_CLIENT WHERE CLIENT_ID = {DeleteClient.ClientGroupID}";
+            string query = $"DELETE FROM TB_CLIENT WHERE CLIENT_ID = {DeleteClient.ClientID}";
 
             try
             {
@@ -281,6 +258,34 @@ namespace VMSViewer.Module
             catch (Exception ee)
             {
                 Console.WriteLine(ee.Message);
+                return false;
+            }
+        }
+        #endregion
+
+        #region TB_Client 생성 시 장치명 중복체크
+        public bool IsUseClientName(Client NewClient)
+        {
+            string query = $"SELECT COUNT(*) FROM TB_CLIENT WHERE CLIENT_NAME = '{NewClient.ClientName}' AND GROUP_ID = {NewClient.ClientGroupID}";
+
+            try
+            {
+                using (MySqlConnection conn = new MySqlConnection(DatebaseInformation.connectionString))
+                {
+                    using (MySqlCommand cmd = new MySqlCommand(query, conn))
+                    {
+                        conn.Open();
+
+                        var Result = cmd.ExecuteScalar();
+
+                        return Convert.ToBoolean(Result);
+                    }
+                }
+            }
+            catch (Exception ee)
+            {
+                Console.WriteLine(ee.Message);
+
                 return false;
             }
         }
