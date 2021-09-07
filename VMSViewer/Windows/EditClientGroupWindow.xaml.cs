@@ -70,8 +70,8 @@ namespace VMSViewer
                 ClientGroup NewClientGroup = new ClientGroup();
                 NewClientGroup.ClientGroupName = txtGroupName.Text.Trim();
 
-                if(DatabaseManager.Shared.INSERT_TB_ClientGroup(NewClientGroup))
-                    EventManager.RefreshClientGroupEvent();
+                if (DatabaseManager.Shared.INSERT_TB_ClientGroup(NewClientGroup))
+                    EventManager.AddClientGroupEvent(NewClientGroup);
                 else
                     System.Windows.MessageBox.Show("생성에 실패했습니다.", "그룹생성", MessageBoxButton.OK, MessageBoxImage.Error);
             }

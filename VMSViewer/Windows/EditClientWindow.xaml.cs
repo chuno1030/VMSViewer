@@ -78,9 +78,7 @@ namespace VMSViewer
                 EditClient.RTSPAddress = txtRTSPAddress.Text.Trim();
 
                 if (DatabaseManager.Shared.UPDATE_TB_Client(EditClient))
-                {
                     EventManager.RefreshClientEvent(EditClient);
-                }
                 else
                     System.Windows.MessageBox.Show("수정에 실패했습니다.", "장치수정", MessageBoxButton.OK, MessageBoxImage.Error);
             }
@@ -94,8 +92,7 @@ namespace VMSViewer
                 if(DatabaseManager.Shared.IsUseClientName(NewClient) == false)
                 {
                     if (DatabaseManager.Shared.INSERT_TB_Client(NewClient))
-                    {
-                    }
+                        EventManager.AddClientEvent(NewClient);
                     else
                         System.Windows.MessageBox.Show("생성에 실패했습니다.", "장치생성", MessageBoxButton.OK, MessageBoxImage.Error);
                 }

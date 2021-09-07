@@ -21,8 +21,62 @@ namespace VMSViewer
         {
             InitProc();
 
+            EventManager.onAddClient += EventManager_onAddClient;
+            EventManager.onAddClientGroup += EventManager_onAddClientGroup;
             EventManager.onRefreshClient += EventManager_onRefreshClient;
             EventManager.onRefreshClientGroup += EventManager_onRefreshClientGroup;
+        }
+
+        private void InitProc()
+        {
+            GetClientGroupList();
+        }
+
+        private void EventManager_onAddClient(Client NewClient)
+        {
+            ListBox TargetClientList = null;
+            ListBoxItem TargetClient = null;
+
+            foreach (UIElement item in spClientGroupList.Children)
+            {
+                Expander expander = item as Expander;
+
+                if (expander == null) continue;
+                if (expander.Tag == null) continue;
+
+                ClientGroup ClientGroup = (ClientGroup)expander.Tag;
+
+                if (ClientGroup == null || ClientGroup is ClientGroup == false) continue;
+                if (ClientGroup.ClientGroupID != NewClient.ClientGroupID) continue;
+
+                TargetClientList = (ListBox)expander.Content;
+            }
+
+            if (TargetClientList == null)
+            {
+                System.Windows.MessageBox.Show("생성에 실패했습니다.", "장치생성", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+
+            TargetClient = GetListBoxItem(NewClient);
+
+            if(TargetClient == null)
+            {
+                System.Windows.MessageBox.Show("생성에 실패했습니다.", "장치생성", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+
+            TargetClientList.Items.Add(TargetClient);
+        }
+
+        private void EventManager_onAddClientGroup(ClientGroup NewClientGroup)
+        {
+            Expander expander = GetExpander(NewClientGroup);
+
+            if (expander != null)
+                spClientGroupList.Children.Add(expander);
+            else
+                System.Windows.MessageBox.Show("생성에 실패했습니다.", "그룹생성", MessageBoxButton.OK, MessageBoxImage.Error);
         }
 
         private void EventManager_onRefreshClient(Client RefreshClient = null)
@@ -99,9 +153,56 @@ namespace VMSViewer
             RefreshExpander.Header = RefreshClientGroup.ClientGroupName.Trim();
         }
 
-        private void InitProc()
+        private Expander GetExpander(ClientGroup ClientGroup)
         {
-            GetClientGroupList();
+            if (ClientGroup == null) return null;
+
+            Expander expander = new Expander();
+
+            expander.Tag = ClientGroup;
+            expander.Header = ClientGroup.ClientGroupName;
+            expander.ContextMenu = new ContextMenu();
+
+            MenuItem menuItem1 = new MenuItem();
+            menuItem1.Tag = ClientGroup.ClientGroupID;
+            menuItem1.Header = "장치생성";
+            menuItem1.Click += Expander_MenuItem_AddClient_Click;
+
+            MenuItem menuItem2 = new MenuItem();
+            menuItem2.Tag = ClientGroup;
+            menuItem2.Header = "그룹편집";
+            menuItem2.Click += Expander_MenuItem_Edit_Click;
+
+            MenuItem menuItem3 = new MenuItem();
+            menuItem3.Tag = ClientGroup;
+            menuItem3.Header = "그룹삭제";
+            menuItem3.Click += Expander_MenuItem_Remove_Click;
+
+            expander.ContextMenu.Items.Add(menuItem1);
+            expander.ContextMenu.Items.Add(new Separator());
+            expander.ContextMenu.Items.Add(menuItem2);
+            expander.ContextMenu.Items.Add(menuItem3);
+
+            return expander;
+        }
+
+        private ListBoxItem GetListBoxItem(Client Client)
+        {
+            if (Client == null) return null;
+
+            ListBoxItem listBoxItem = new ListBoxItem() { Content = Client.ClientName, Tag = Client };
+            listBoxItem.ContextMenu = new ContextMenu();
+
+            MenuItem menuItem4 = new MenuItem() { Header = "장치편집", Tag = Client };
+            menuItem4.Click += Client_MenuItem_Edit_Click;
+
+            MenuItem menuItem5 = new MenuItem() { Header = "장치삭제", Tag = Client };
+            menuItem5.Click += Client_MenuItem_Remove_Click;
+
+            listBoxItem.ContextMenu.Items.Add(menuItem4);
+            listBoxItem.ContextMenu.Items.Add(menuItem5);
+
+            return listBoxItem;
         }
 
         private void GetClientGroupList()
@@ -122,30 +223,11 @@ namespace VMSViewer
 
             foreach (var ClientGroup in ClientGroupList)
             {
-                Expander expander = new Expander();
-                expander.Tag = ClientGroup;
-                expander.Header = ClientGroup.ClientGroupName;
-                expander.ContextMenu = new ContextMenu();
+                if (ClientGroup == null) continue;
 
-                MenuItem menuItem1 = new MenuItem();
-                menuItem1.Tag = ClientGroup.ClientGroupID;
-                menuItem1.Header = "장치생성";
-                menuItem1.Click += Expander_MenuItem_AddClient_Click;
+                Expander expander = GetExpander(ClientGroup);
 
-                MenuItem menuItem2 = new MenuItem();
-                menuItem2.Tag = ClientGroup;
-                menuItem2.Header = "그룹편집";
-                menuItem2.Click += Expander_MenuItem_Edit_Click;
-
-                MenuItem menuItem3 = new MenuItem();
-                menuItem3.Tag = ClientGroup;
-                menuItem3.Header = "그룹삭제";
-                menuItem3.Click += Expander_MenuItem_Remove_Click;
-                
-                expander.ContextMenu.Items.Add(menuItem1);
-                expander.ContextMenu.Items.Add(new Separator());
-                expander.ContextMenu.Items.Add(menuItem2);
-                expander.ContextMenu.Items.Add(menuItem3);
+                if (expander == null) continue;
 
                 List<Client> ClientList = DatabaseManager.Shared.SELECT_TB_Client(ClientGroup);
 
@@ -157,17 +239,11 @@ namespace VMSViewer
 
                     foreach (var Client in ClientList)
                     {
-                        ListBoxItem listBoxItem = new ListBoxItem() { Content = Client.ClientName, Tag = Client };
-                        listBoxItem.ContextMenu = new ContextMenu();
+                        if (Client == null) continue;
 
-                        MenuItem menuItem4 = new MenuItem() { Header = "장치편집", Tag = Client };
-                        menuItem4.Click += Client_MenuItem_Edit_Click;
+                        ListBoxItem listBoxItem = GetListBoxItem(Client);
 
-                        MenuItem menuItem5 = new MenuItem() { Header = "장치삭제", Tag = Client };
-                        menuItem5.Click += Client_MenuItem_Remove_Click;
-
-                        listBoxItem.ContextMenu.Items.Add(menuItem4);
-                        listBoxItem.ContextMenu.Items.Add(menuItem5);
+                        if (listBoxItem == null) continue;
 
                         listBox.Items.Add(listBoxItem);
                     }

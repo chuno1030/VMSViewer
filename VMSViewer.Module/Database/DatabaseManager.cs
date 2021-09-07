@@ -205,7 +205,8 @@ namespace VMSViewer.Module
             }
             catch (Exception ee)
             {
-                Console.WriteLine(ee.Message);
+                Console.WriteLine(ee.StackTrace);
+                Console.WriteLine($"### {ee.Message} ###");
 
                 return false;
             }
