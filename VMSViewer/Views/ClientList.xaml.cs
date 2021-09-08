@@ -12,6 +12,11 @@ namespace VMSViewer
     /// </summary>
     public partial class ClientList : UserControl
     {
+        /// <summary>
+        /// 장치리스트가 보여질 경우 TRUE
+        /// </summary>
+        private bool IsOpenClientList = false;
+
         public ClientList()
         {
             InitializeComponent();
@@ -29,13 +34,13 @@ namespace VMSViewer
 
         private void InitProc()
         {
-            GetClientGroupList();
+            RefreshClientGroupList();
         }
 
         private void EventManager_onAddClient(Client NewClient)
         {
-            ListBox TargetClientList = null;
-            ListBoxItem TargetClient = null;
+            Expander TargetClientList = null;
+            ClientGroup TargetClientGroup = null;
 
             foreach (UIElement item in spClientGroupList.Children)
             {
@@ -49,34 +54,33 @@ namespace VMSViewer
                 if (ClientGroup == null || ClientGroup is ClientGroup == false) continue;
                 if (ClientGroup.ClientGroupID != NewClient.ClientGroupID) continue;
 
-                TargetClientList = (ListBox)expander.Content;
+                TargetClientGroup = ClientGroup;
+                TargetClientList = expander;
             }
 
-            if (TargetClientList == null)
+            if (TargetClientList == null || TargetClientGroup == null)
             {
                 System.Windows.MessageBox.Show("생성에 실패했습니다.", "장치생성", MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
 
-            TargetClient = GetListBoxItem(NewClient);
+            ListBox listBox = (ListBox)TargetClientList.Content;
 
-            if(TargetClient == null)
-            {
-                System.Windows.MessageBox.Show("생성에 실패했습니다.", "장치생성", MessageBoxButton.OK, MessageBoxImage.Error);
-                return;
-            }
+            if (listBox.Items.Count > 0) listBox.Items.Clear();
 
-            TargetClientList.Items.Add(TargetClient);
+            TargetClientList.Content = RefreshClientList(DatabaseManager.Shared.SELECT_TB_Client(TargetClientGroup));
         }
 
         private void EventManager_onAddClientGroup(ClientGroup NewClientGroup)
         {
-            Expander expander = GetExpander(NewClientGroup);
+            RefreshClientGroupList();
 
-            if (expander != null)
-                spClientGroupList.Children.Add(expander);
-            else
-                System.Windows.MessageBox.Show("생성에 실패했습니다.", "그룹생성", MessageBoxButton.OK, MessageBoxImage.Error);
+            //Expander expander = GetExpander(NewClientGroup);
+
+            //if (expander != null)
+            //    spClientGroupList.Children.Add(expander);
+            //else
+            //    System.Windows.MessageBox.Show("생성에 실패했습니다.", "그룹생성", MessageBoxButton.OK, MessageBoxImage.Error);
         }
 
         private void EventManager_onRefreshClient(Client RefreshClient = null)
@@ -164,7 +168,7 @@ namespace VMSViewer
             expander.ContextMenu = new ContextMenu();
 
             MenuItem menuItem1 = new MenuItem();
-            menuItem1.Tag = ClientGroup.ClientGroupID;
+            menuItem1.Tag = ClientGroup;
             menuItem1.Header = "장치생성";
             menuItem1.Click += Expander_MenuItem_AddClient_Click;
 
@@ -205,9 +209,28 @@ namespace VMSViewer
             return listBoxItem;
         }
 
-        private void GetClientGroupList()
+        private void ClearList()
         {
-            ClearGroupList();
+            foreach (UIElement item in spClientGroupList.Children)
+            {
+                Expander expander = item as Expander;
+
+                if (expander == null) continue;
+                if (expander.Tag == null) continue;
+
+                ListBox listBox = (ListBox)expander.Content;
+
+                if (listBox == null || listBox.Items.Count < 1) continue;
+
+                listBox.Items.Clear();
+            }
+
+            spClientGroupList.Children.Clear();
+        }
+
+        private void RefreshClientGroupList()
+        {
+            ClearList();
 
             List<ClientGroup> ClientGroupList = DatabaseManager.Shared.SELECT_TB_ClientGroup();
 
@@ -229,30 +252,29 @@ namespace VMSViewer
 
                 if (expander == null) continue;
 
-                List<Client> ClientList = DatabaseManager.Shared.SELECT_TB_Client(ClientGroup);
-
-                if (ClientList != null && ClientList.Count > 0)
-                {
-                    ListBox listBox = new ListBox();
-                    listBox.AllowDrop = true;
-                    listBox.ContextMenu = new ContextMenu();
-
-                    foreach (var Client in ClientList)
-                    {
-                        if (Client == null) continue;
-
-                        ListBoxItem listBoxItem = GetListBoxItem(Client);
-
-                        if (listBoxItem == null) continue;
-
-                        listBox.Items.Add(listBoxItem);
-                    }
-
-                    expander.Content = listBox;
-                }
-
+                expander.Content = RefreshClientList(DatabaseManager.Shared.SELECT_TB_Client(ClientGroup));
                 spClientGroupList.Children.Add(expander);
             }
+        }
+
+        private ListBox RefreshClientList(List<Client> ClientList)
+        {
+            ListBox listBox = new ListBox();
+            listBox.AllowDrop = true;
+            listBox.ContextMenu = new ContextMenu();
+
+            foreach (var Client in ClientList)
+            {
+                if (Client == null) continue;
+
+                ListBoxItem listBoxItem = GetListBoxItem(Client);
+
+                if (listBoxItem == null) continue;
+
+                listBox.Items.Add(listBoxItem);
+            }
+
+            return listBox;
         }
 
         private void MenuItem_Click(object sender, RoutedEventArgs e)
@@ -267,9 +289,9 @@ namespace VMSViewer
             if (menuItem == null) return;
             if (menuItem.Tag == null) return;
 
-            int GroupID = Convert.ToInt32(menuItem.Tag);
+            ClientGroup ClientGroup = (ClientGroup)menuItem.Tag;
 
-            WindowManager.Shared.ShowEditClientWindow(GroupID);
+            WindowManager.Shared.ShowEditClientWindow(ClientGroup.ClientGroupID);
         }
 
         private void Expander_MenuItem_Edit_Click(object sender, RoutedEventArgs e)
@@ -326,20 +348,6 @@ namespace VMSViewer
                 System.Windows.MessageBox.Show("삭제에 실패했습니다.", "장치삭제", MessageBoxButton.OK, MessageBoxImage.Error);
         }
 
-        private void ClearGroupList()
-        {
-            foreach (UIElement item in spClientGroupList.Children)
-            {
-                Expander expander = item as Expander;
-
-                if (expander == null) return;
-                if (expander.Tag == null) return;
-
-            }
-
-            spClientGroupList.Children.Clear();
-        }
-
         /// <summary>
         /// 그룹삭제
         /// </summary>
@@ -362,8 +370,14 @@ namespace VMSViewer
                 RemoveExpander = expander;
             }
 
-            if (DatabaseManager.Shared.DELETE_TB_ClientGroup((ClientGroup)RemoveExpander.Tag))
+            if (DatabaseManager.Shared.DELETE_TB_ClientGroup((ClientGroup)RemoveExpander.Tag) && DatabaseManager.Shared.ALL_DELETE_TB_Client((ClientGroup)RemoveExpander.Tag))
+            {
+                ListBox listbox = (ListBox)RemoveExpander.Content;
+
+                if (listbox != null && listbox.Items.Count > 0) listbox.Items.Clear();
+
                 spClientGroupList.Children.Remove(RemoveExpander);
+            }
             else
                 System.Windows.MessageBox.Show("삭제에 실패했습니다.", "그룹삭제", MessageBoxButton.OK, MessageBoxImage.Error);
         }

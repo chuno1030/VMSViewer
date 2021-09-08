@@ -60,20 +60,31 @@ namespace VMSViewer
                 ClientGroup EditClientGroup = ClientGroup;
                 EditClientGroup.ClientGroupName = txtGroupName.Text.Trim();
 
-                if (DatabaseManager.Shared.UPDATE_TB_ClientGroup(EditClientGroup))
-                    EventManager.RefreshClientGroupEvent(EditClientGroup);
+                if(DatabaseManager.Shared.IsUseClientGroupName(IsEdit, EditClientGroup) == false)
+                {
+                    if (DatabaseManager.Shared.UPDATE_TB_ClientGroup(EditClientGroup))
+                        EventManager.RefreshClientGroupEvent(EditClientGroup);
+                    else
+                        System.Windows.MessageBox.Show("수정에 실패했습니다.", "그룹수정", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
                 else
-                    System.Windows.MessageBox.Show("수정에 실패했습니다.", "그룹수정", MessageBoxButton.OK, MessageBoxImage.Error);
+                    System.Windows.MessageBox.Show("입력하신 그룹명은 사용 중입니다.", "그룹수정", MessageBoxButton.OK, MessageBoxImage.Error);
             }
             else
             {
                 ClientGroup NewClientGroup = new ClientGroup();
                 NewClientGroup.ClientGroupName = txtGroupName.Text.Trim();
 
-                if (DatabaseManager.Shared.INSERT_TB_ClientGroup(NewClientGroup))
-                    EventManager.AddClientGroupEvent(NewClientGroup);
+                if (DatabaseManager.Shared.IsUseClientGroupName(IsEdit, NewClientGroup) == false)
+                {
+                    if (DatabaseManager.Shared.INSERT_TB_ClientGroup(NewClientGroup))
+                        EventManager.AddClientGroupEvent(NewClientGroup);
+                    else
+                        System.Windows.MessageBox.Show("생성에 실패했습니다.", "그룹생성", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
                 else
-                    System.Windows.MessageBox.Show("생성에 실패했습니다.", "그룹생성", MessageBoxButton.OK, MessageBoxImage.Error);
+                    System.Windows.MessageBox.Show("입력하신 그룹명은 사용 중입니다.", "그룹생성", MessageBoxButton.OK, MessageBoxImage.Error);
+
             }
         }
     }

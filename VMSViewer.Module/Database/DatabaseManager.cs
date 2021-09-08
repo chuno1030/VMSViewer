@@ -21,7 +21,7 @@ namespace VMSViewer.Module
             }
         }
 
-        #region TB_ClientGroup(SELECT/INSERT/UPDATE/DELETE)
+        #region TB_ClientGroup(SELECT/INSERT/UPDATE/DELETE/COUNT/중복체크)
         public List<ClientGroup> SELECT_TB_ClientGroup()
         {
             string query = "SELECT * FROM TB_ClientGroup";
@@ -137,9 +137,72 @@ namespace VMSViewer.Module
                 return false;
             }
         }
+
+        public bool IsOverCountClientGroup()
+        {
+            bool IsOver = false;
+            string query = $"SELECT COUNT(*) FROM TB_ClientGroup";
+
+            try
+            {
+                using (MySqlConnection conn = new MySqlConnection(DatebaseInformation.connectionString))
+                {
+                    using (MySqlCommand cmd = new MySqlCommand(query, conn))
+                    {
+                        conn.Open();
+
+                        int Count = Convert.ToInt32(cmd.ExecuteScalar());
+
+                        if (Count >= 50)
+                            IsOver = true;
+                        else
+                            IsOver = false;
+
+                        return IsOver;
+                    }
+                }
+            }
+            catch (Exception ee)
+            {
+                Console.WriteLine(ee.Message);
+
+                return false;
+            }
+        }
+
+        public bool IsUseClientGroupName(bool IsEdit, ClientGroup ClientGroup)
+        {
+            string query = "";
+
+            if (IsEdit)
+                query = $"SELECT COUNT(*) FROM TB_ClientGroup WHERE GROUP_NAME = '{ClientGroup.ClientGroupName}' AND GROUP_ID <> {ClientGroup.ClientGroupID}";
+            else
+                query = $"SELECT COUNT(*) FROM TB_ClientGroup WHERE GROUP_NAME = '{ClientGroup.ClientGroupName}'";
+
+            try
+            {
+                using (MySqlConnection conn = new MySqlConnection(DatebaseInformation.connectionString))
+                {
+                    using (MySqlCommand cmd = new MySqlCommand(query, conn))
+                    {
+                        conn.Open();
+
+                        var Result = cmd.ExecuteScalar();
+
+                        return Convert.ToBoolean(Result);
+                    }
+                }
+            }
+            catch (Exception ee)
+            {
+                Console.WriteLine(ee.Message);
+
+                return false;
+            }
+        }
         #endregion
 
-        #region TB_Client(SELECT/INSERT/UPDATE/DELETE)
+        #region TB_Client(SELECT/INSERT/UPDATE/DELETE/DELETE_ALL/COUNT/중복체크)
         public List<Client> SELECT_TB_Client(ClientGroup ClientGroup)
         {
             string query = $"SELECT * FROM TB_Client WHERE GROUP_ID = {ClientGroup.ClientGroupID}";
@@ -262,12 +325,71 @@ namespace VMSViewer.Module
                 return false;
             }
         }
-        #endregion
 
-        #region TB_Client 생성 시 장치명 중복체크
-        public bool IsUseClientName(Client NewClient)
+        public bool ALL_DELETE_TB_Client(ClientGroup ClientGroup)
         {
-            string query = $"SELECT COUNT(*) FROM TB_CLIENT WHERE CLIENT_NAME = '{NewClient.ClientName}' AND GROUP_ID = {NewClient.ClientGroupID}";
+            string query = $"DELETE FROM TB_CLIENT WHERE GROUP_ID = {ClientGroup.ClientGroupID}";
+
+            try
+            {
+                using (MySqlConnection conn = new MySqlConnection(DatebaseInformation.connectionString))
+                {
+                    using (MySqlCommand cmd = new MySqlCommand(query, conn))
+                    {
+                        conn.Open();
+                        cmd.ExecuteNonQuery();
+                    }
+                }
+
+                return true;
+            }
+            catch (Exception ee)
+            {
+                Console.WriteLine(ee.Message);
+                return false;
+            }
+        }
+
+        public bool IsOverCountClient(int ClientGroupID)
+        {
+            bool IsOver = false;
+            string query = $"SELECT COUNT(*) FROM TB_Client WHERE GROUP_ID = {ClientGroupID}";
+
+            try
+            {
+                using (MySqlConnection conn = new MySqlConnection(DatebaseInformation.connectionString))
+                {
+                    using (MySqlCommand cmd = new MySqlCommand(query, conn))
+                    {
+                        conn.Open();
+
+                        int Count = Convert.ToInt32(cmd.ExecuteScalar());
+
+                        if (Count >= 50)
+                            IsOver = true;
+                        else
+                            IsOver = false;
+
+                        return IsOver;
+                    }
+                }
+            }
+            catch (Exception ee)
+            {
+                Console.WriteLine(ee.Message);
+
+                return false;
+            }
+        }
+
+        public bool IsUseClientName(bool IsEdit, Client NewClient)
+        {
+            string query = "";
+
+            if(IsEdit)
+                query = $"SELECT COUNT(*) FROM TB_CLIENT WHERE CLIENT_NAME = '{NewClient.ClientName}' AND GROUP_ID = {NewClient.ClientGroupID} CLIENT_ID <> {NewClient.ClientID}";
+            else
+                query = $"SELECT COUNT(*) FROM TB_CLIENT WHERE CLIENT_NAME = '{NewClient.ClientName}' AND GROUP_ID = {NewClient.ClientGroupID}";
 
             try
             {

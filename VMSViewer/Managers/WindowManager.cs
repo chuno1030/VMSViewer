@@ -3,6 +3,8 @@ using System.Windows;
 using System.Linq;
 using System.Collections.Generic;
 
+using VMSViewer.Module;
+
 namespace VMSViewer
 {
     public class WindowManager
@@ -40,6 +42,12 @@ namespace VMSViewer
 
         }
 
+        public void AllWindowClose()
+        {
+            if (EditClientWindow != null) EditClientWindow.Close();
+            if (EditClientGroupWindow != null) EditClientGroupWindow.Close();
+        }
+
         #region LoginWindow
         public void ShowLoginWindow()
         {
@@ -66,12 +74,17 @@ namespace VMSViewer
 
         public void ShowEditClientGroupWindow(ClientGroup ClientGroup = null)
         {
-            if (EditClientGroupWindow == null)
+            if (DatabaseManager.Shared.IsOverCountClientGroup() == false)
             {
-                EditClientGroupWindow = new EditClientGroupWindow(ClientGroup);
-                EditClientGroupWindow.Closed += EditClientGroupWindow_Closed;
-                EditClientGroupWindow.Show();
+                if (EditClientGroupWindow == null)
+                {
+                    EditClientGroupWindow = new EditClientGroupWindow(ClientGroup);
+                    EditClientGroupWindow.Closed += EditClientGroupWindow_Closed;
+                    EditClientGroupWindow.Show();
+                }
             }
+            else
+                System.Windows.MessageBox.Show("최대 그룹생성 개수는 50개입니다.", "오류", MessageBoxButton.OK, MessageBoxImage.Error);
         }
 
         private void EditClientGroupWindow_Closed(object sender, EventArgs e)
@@ -87,12 +100,17 @@ namespace VMSViewer
 
         public void ShowEditClientWindow(int ClientGroupID, Client Client = null)
         {
-            if (EditClientWindow == null)
+            if (DatabaseManager.Shared.IsOverCountClient(ClientGroupID) == false)
             {
-                EditClientWindow = new EditClientWindow(ClientGroupID, Client);
-                EditClientWindow.Closed += EditClientWindow_Closed;
-                EditClientWindow.Show();
+                if (EditClientWindow == null)
+                {
+                    EditClientWindow = new EditClientWindow(ClientGroupID, Client);
+                    EditClientWindow.Closed += EditClientWindow_Closed;
+                    EditClientWindow.Show();
+                }
             }
+            else
+                System.Windows.MessageBox.Show("최대 그룹별 장치생성 개수는 50개입니다.", "오류", MessageBoxButton.OK, MessageBoxImage.Error);
         }
 
         private void EditClientWindow_Closed(object sender, EventArgs e)

@@ -77,10 +77,15 @@ namespace VMSViewer
                 EditClient.ClientName = txtClientName.Text.Trim();
                 EditClient.RTSPAddress = txtRTSPAddress.Text.Trim();
 
-                if (DatabaseManager.Shared.UPDATE_TB_Client(EditClient))
-                    EventManager.RefreshClientEvent(EditClient);
+                if (DatabaseManager.Shared.IsUseClientName(IsEdit, EditClient) == false)
+                {
+                    if (DatabaseManager.Shared.UPDATE_TB_Client(EditClient))
+                        EventManager.RefreshClientEvent(EditClient);
+                    else
+                        System.Windows.MessageBox.Show("수정에 실패했습니다.", "장치수정", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
                 else
-                    System.Windows.MessageBox.Show("수정에 실패했습니다.", "장치수정", MessageBoxButton.OK, MessageBoxImage.Error);
+                    System.Windows.MessageBox.Show("입력하신 장치명은 해당 그룹에서 사용 중입니다.", "장치수정", MessageBoxButton.OK, MessageBoxImage.Error);
             }
             else
             {
@@ -89,7 +94,7 @@ namespace VMSViewer
                 NewClient.ClientName = txtClientName.Text.Trim();
                 NewClient.RTSPAddress = txtRTSPAddress.Text.Trim();
 
-                if(DatabaseManager.Shared.IsUseClientName(NewClient) == false)
+                if(DatabaseManager.Shared.IsUseClientName(IsEdit, NewClient) == false)
                 {
                     if (DatabaseManager.Shared.INSERT_TB_Client(NewClient))
                         EventManager.AddClientEvent(NewClient);
