@@ -5,7 +5,7 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{F54A3F40-09EE-4BC6-82CA-4FCB07839DE3}</ProjectGuid>
-    <OutputType>WinExe</OutputType>
+    <OutputType>Exe</OutputType>
     <RootNamespace>VMSViewer</RootNamespace>
     <AssemblyName>VMSViewer</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
@@ -65,8 +65,14 @@
     </ApplicationDefinition>
     <Compile Include="Managers\EventManager.cs" />
     <Compile Include="Managers\WindowManager.cs" />
-    <Compile Include="Views\ClientList.xaml.cs">
-      <DependentUpon>ClientList.xaml</DependentUpon>
+    <Compile Include="Views\ucClientList.xaml.cs">
+      <DependentUpon>ucClientList.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\ucGridViewer.xaml.cs">
+      <DependentUpon>ucGridViewer.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\ucViewer.xaml.cs">
+      <DependentUpon>ucViewer.xaml</DependentUpon>
     </Compile>
     <Compile Include="Windows\EditClientGroupWindow.xaml.cs">
       <DependentUpon>EditClientGroupWindow.xaml</DependentUpon>
@@ -89,7 +95,15 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Page Include="Views\ClientList.xaml">
+    <Page Include="Views\ucClientList.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\ucGridViewer.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\ucViewer.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -4,6 +4,7 @@ using System.Windows.Media;
 using System.Windows.Controls;
 
 using VMSViewer.Module;
+using System.Windows.Input;
 
 namespace VMSViewer
 {
@@ -29,6 +30,11 @@ namespace VMSViewer
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             DoFinal();
+        }
+
+        protected override void OnPreviewKeyDown(KeyEventArgs e)
+        {
+            base.OnPreviewKeyDown(e);
         }
 
         private void mainGrid_SizeChanged(object sender, SizeChangedEventArgs e)

@@ -39,7 +39,13 @@
         </Grid>
 
         <Grid Grid.Row="1" x:Name="mainGrid">
-            <local:ClientList HorizontalAlignment="Left"/>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="250"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <local:ucClientList Grid.Column="0"/>
+            <local:ucGridViewer Grid.Column="1"/>
         </Grid>
     </Grid>
 </Window>

@@ -10,14 +10,14 @@ namespace VMSViewer
     /// <summary>
     /// ClientList.xaml에 대한 상호 작용 논리
     /// </summary>
-    public partial class ClientList : UserControl
+    public partial class ucClientList : UserControl
     {
         /// <summary>
         /// 장치리스트가 보여질 경우 TRUE
         /// </summary>
         private bool IsOpenClientList = false;
 
-        public ClientList()
+        public ucClientList()
         {
             InitializeComponent();
         }
