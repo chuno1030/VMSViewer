@@ -5,13 +5,23 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:VMSViewer"
              mc:Ignorable="d" 
-             d:DesignHeight="300" d:DesignWidth="300">
+             d:DesignHeight="0" d:DesignWidth="0"
+             AllowDrop="True"
+             Background="Transparent"
+             Loaded="UserControl_Loaded" PreviewDrop="UserControl_PreviewDrop">
     <Grid>
         <Border BorderBrush="Black" BorderThickness="1">
-            <Image Width="75"
-                   Height="75"
-                   Opacity="0.5"
-                   Source="/VMSViewer.Theme;component/Images/Monitor.png"/>
+            <Grid>
+                <Image x:Name="imgDisplay"
+                       Width="90"
+                       Height="90"
+                       Opacity="0.5"
+                       Source="/VMSViewer.Theme;component/Images/Monitor.png"/>
+
+                <!--<Image x:Name="imgViewer">
+                    
+                </Image>-->
+            </Grid>
         </Border>
     </Grid>
 </UserControl>

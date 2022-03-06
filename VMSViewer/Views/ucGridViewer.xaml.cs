@@ -26,7 +26,7 @@ namespace VMSViewer
 
         private void SplitGridViewer()
         {
-            int splitCount = 2;
+            int splitCount = 4;
 
             for (int row = 0; row < splitCount; row++)
             {

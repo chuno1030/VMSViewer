@@ -17,6 +17,11 @@ namespace VMSViewer
         /// </summary>
         private bool IsOpenClientList = false;
 
+        /// <summary>
+        /// 드래그할 컨트롤을 선택했을때
+        /// </summary>
+        private bool IsDrag = true;
+
         public ucClientList()
         {
             InitializeComponent();
@@ -161,23 +166,23 @@ namespace VMSViewer
         {
             if (ClientGroup == null) return null;
 
-            Expander expander = new Expander();
+            var expander = new Expander();
 
             expander.Tag = ClientGroup;
             expander.Header = ClientGroup.ClientGroupName;
             expander.ContextMenu = new ContextMenu();
 
-            MenuItem menuItem1 = new MenuItem();
+            var menuItem1 = new MenuItem();
             menuItem1.Tag = ClientGroup;
             menuItem1.Header = "장치생성";
             menuItem1.Click += Expander_MenuItem_AddClient_Click;
 
-            MenuItem menuItem2 = new MenuItem();
+            var menuItem2 = new MenuItem();
             menuItem2.Tag = ClientGroup;
             menuItem2.Header = "그룹편집";
             menuItem2.Click += Expander_MenuItem_Edit_Click;
 
-            MenuItem menuItem3 = new MenuItem();
+            var menuItem3 = new MenuItem();
             menuItem3.Tag = ClientGroup;
             menuItem3.Header = "그룹삭제";
             menuItem3.Click += Expander_MenuItem_Remove_Click;
@@ -194,19 +199,44 @@ namespace VMSViewer
         {
             if (Client == null) return null;
 
-            ListBoxItem listBoxItem = new ListBoxItem() { Content = Client.ClientName, Tag = Client };
+            var listBoxItem = new ListBoxItem() { Content = Client.ClientName, Tag = Client };
             listBoxItem.ContextMenu = new ContextMenu();
 
-            MenuItem menuItem4 = new MenuItem() { Header = "장치편집", Tag = Client };
-            menuItem4.Click += Client_MenuItem_Edit_Click;
+            var menuItem1 = new MenuItem() { Header = "장치편집", Tag = Client };
+            menuItem1.Click += Client_MenuItem_Edit_Click;
 
-            MenuItem menuItem5 = new MenuItem() { Header = "장치삭제", Tag = Client };
-            menuItem5.Click += Client_MenuItem_Remove_Click;
+            var menuItem2 = new MenuItem() { Header = "장치삭제", Tag = Client };
+            menuItem2.Click += Client_MenuItem_Remove_Click;
 
-            listBoxItem.ContextMenu.Items.Add(menuItem4);
-            listBoxItem.ContextMenu.Items.Add(menuItem5);
+            listBoxItem.ContextMenu.Items.Add(menuItem1);
+            listBoxItem.ContextMenu.Items.Add(menuItem2);
+
+            listBoxItem.PreviewMouseLeftButtonDown += ListBoxItem_PreviewMouseLeftButtonDown;
+            listBoxItem.PreviewMouseMove += ListBoxItem_PreviewMouseMove;
 
             return listBoxItem;
+        }
+
+        private void ListBoxItem_PreviewMouseMove(object sender, System.Windows.Input.MouseEventArgs e)
+        {
+            if (e.LeftButton == System.Windows.Input.MouseButtonState.Pressed && IsDrag)
+            {
+                var listboxItem = sender as ListBoxItem;
+
+                if (listboxItem == null) return;
+                if (listboxItem.Tag == null) return;
+                if (listboxItem.Tag is Client == false) return;
+
+                var client = (Client)listboxItem.Tag;
+
+                var dataObject = new DataObject("Client", client);
+                DragDrop.DoDragDrop(listboxItem, dataObject, DragDropEffects.Move);
+            }
+        }
+
+        private void ListBoxItem_PreviewMouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            IsDrag = true;
         }
 
         private void ClearList()
@@ -228,6 +258,9 @@ namespace VMSViewer
             spClientGroupList.Children.Clear();
         }
 
+        /// <summary>
+        /// 그룹리스트 불러오기
+        /// </summary>
         private void RefreshClientGroupList()
         {
             ClearList();
