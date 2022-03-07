@@ -37,25 +37,57 @@ namespace VMSViewer
 
                 if (client == null) return;
 
-                InitClient(client);
+                SetViewer(MoniterType.RTSP);
+                //InitClient(client);
            }
         }
 
         private void InitProc()
         {
-
+            SetViewer(MoniterType.NONE);
         }
 
         /// <summary>
-        /// 클라이언트 
+        /// 뷰어화면 SET
+        /// </summary>
+        private void SetViewer(MoniterType MoniterType)
+        {
+            imgBackGround.Visibility = Visibility.Hidden;
+
+            gridViewer.Visibility = Visibility.Hidden;
+            imgViewer.Visibility = Visibility.Hidden;
+
+            switch (MoniterType)
+            {
+                case MoniterType.NONE:
+                    imgBackGround.Visibility = Visibility.Visible;
+                    break;
+                case MoniterType.RTSP:
+                    gridViewer.Visibility = Visibility.Visible;
+                    imgViewer.Visibility = Visibility.Visible;
+                    break;
+            }
+        }
+
+        /// <summary>
+        /// 클라이언트 스트리밍
         /// </summary>
         private void InitClient(Client Client)
         {
             if(RTSP == null)
             {
                 RTSP = new RTSP(Client);
+                RTSP.OnDisplayStream += RTSP_OnDisplayStream;
                 RTSP.InitRTSP();
             }
+        }
+
+        /// <summary>
+        /// 카메라 영상을 화면에 표출
+        /// </summary>
+        private void RTSP_OnDisplayStream(object sender, EventArgs e)
+        {
+
         }
     }
 }

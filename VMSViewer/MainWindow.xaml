@@ -44,7 +44,7 @@
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
 
-            <local:ucClientList Grid.Column="0"/>
+            <local:ucClientList Grid.Column="0" />
             <local:ucGridViewer Grid.Column="1"/>
         </Grid>
     </Grid>

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Windows;
+using System.Diagnostics;
 
 namespace VMSViewer
 {
@@ -10,14 +11,44 @@ namespace VMSViewer
     {
         private void Application_Startup(object sender, StartupEventArgs e)
         {
-            //WindowManager.Shared.ShowLoginWindow();
+            try
+            {
+                if (IsProcess())
+                {
+                    if (FFMpegHelper.FFMpegInitialize() == false)
+                        throw new Exception("FFMpeg 초기화 작업 오류.");
 
+                    var mainWindow = new MainWindow();
+                    mainWindow.Show();
+                }
+                else
+                    throw new Exception("프로그램이 이미 실행 중입니다.");
+            }
+            catch (Exception ee)
+            {
+                System.Windows.MessageBox.Show($"{ee.Message}\n프로그램을 종료합니다.", "오류", MessageBoxButton.OK, MessageBoxImage.Error);
+                System.Windows.Application.Current.Shutdown();
+            }
+        }
 
+        /// <summary>
+        /// 중복실행 체크
+        /// </summary>
+        private bool IsProcess()
+        {
+            try
+            {
+                Process[] process = Process.GetProcessesByName(System.Diagnostics.Process.GetCurrentProcess().ProcessName);
 
-
-
-            //var mainWindow = new MainWindow();
-            //mainWindow.Show();
+                if (process.Length > 1)
+                    return false;
+                else
+                    return true;
+            }
+            catch (Exception ee)
+            {
+                return false;
+            }
         }
     }
 }

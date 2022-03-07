@@ -9,6 +9,7 @@
              Loaded="UserControl_Loaded">
     <Grid>
         <ScrollViewer x:Name="svClientList"
+                      Background="{DynamicResource BackGround_Color}"
                       HorizontalScrollBarVisibility="Disabled">
             <ScrollViewer.ContextMenu>
                 <ContextMenu>

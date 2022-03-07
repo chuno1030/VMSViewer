@@ -12,15 +12,23 @@
     <Grid>
         <Border BorderBrush="Black" BorderThickness="1">
             <Grid>
-                <Image x:Name="imgDisplay"
+                <Image x:Name="imgBackGround"
                        Width="90"
                        Height="90"
                        Opacity="0.5"
                        Source="/VMSViewer.Theme;component/Images/Monitor.png"/>
 
-                <!--<Image x:Name="imgViewer">
-                    
-                </Image>-->
+                <Grid x:Name="gridViewer" Background="Black">
+                    <Image x:Name="imgViewer">
+                        <Image.ContextMenu>
+                            <ContextMenu>
+                                <MenuItem Header="장치정보"/>
+                                <Separator/>
+                                <MenuItem Header="장치제거"/>
+                            </ContextMenu>
+                        </Image.ContextMenu>
+                    </Image>
+                </Grid>
             </Grid>
         </Border>
     </Grid>

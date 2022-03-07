@@ -11,4 +11,15 @@ namespace VMSViewer
         Maxmize,
         Close
     }
+
+    /// <summary>
+    /// 뷰어화면타입
+    /// </summary>
+    public enum MoniterType
+    {
+        /* 미등록 */
+        NONE = 0,
+        /* 등록*/
+        RTSP = 1
+    }
 }
