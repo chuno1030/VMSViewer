@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media.Imaging;
 
 using VMSViewer.Module;
 
@@ -23,7 +24,23 @@ namespace VMSViewer
 
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
+            var window = Window.GetWindow(this);
+            window.Closing += UserControl_Closing;
+
             InitProc();
+        }
+
+        private void UserControl_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            if(RTSP != null)
+            {
+                RTSP.onDisplayStream -= RTSP_onDisplayStream;
+                RTSP.Disconnect();
+                RTSP.Dispose();
+                RTSP = null;
+            }
+
+            GC.Collect();
         }
 
         /// <summary>
@@ -38,7 +55,7 @@ namespace VMSViewer
                 if (client == null) return;
 
                 SetViewer(MoniterType.RTSP);
-                //InitClient(client);
+                InitClient(client);
            }
         }
 
@@ -77,17 +94,30 @@ namespace VMSViewer
             if(RTSP == null)
             {
                 RTSP = new RTSP(Client);
-                RTSP.OnDisplayStream += RTSP_OnDisplayStream;
+                RTSP.onDisplayStream += RTSP_onDisplayStream;
                 RTSP.InitRTSP();
             }
         }
 
-        /// <summary>
-        /// 카메라 영상을 화면에 표출
-        /// </summary>
-        private void RTSP_OnDisplayStream(object sender, EventArgs e)
+        private BitmapImage ConvertBitmapImage(System.Drawing.Bitmap bitmap)
         {
+            System.IO.MemoryStream ms = new System.IO.MemoryStream();
+            bitmap.Save(ms, System.Drawing.Imaging.ImageFormat.Bmp);
+            BitmapImage image = new BitmapImage();
+            image.BeginInit();
+            ms.Seek(0, System.IO.SeekOrigin.Begin);
+            image.StreamSource = ms;
+            image.EndInit();
 
+            return image;
+        }
+
+        private void RTSP_onDisplayStream(System.Drawing.Bitmap Bitmap)
+        {
+            this.Dispatcher.Invoke(System.Windows.Threading.DispatcherPriority.Normal, new Action(delegate
+            {
+                imgViewer.Source = ConvertBitmapImage(Bitmap);
+            }));
         }
     }
 }

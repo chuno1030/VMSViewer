@@ -66,11 +66,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Log\LogManager.cs" />
     <Compile Include="Models\Client.cs" />
     <Compile Include="Common\CommonTypes.cs" />
     <Compile Include="Database\DatabaseManager.cs" />
     <Compile Include="Database\DatebaseInformation.cs" />
-    <Compile Include="Log\TraceManager.cs" />
     <Compile Include="Models\ClientGroup.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

@@ -19,7 +19,7 @@
                        Source="/VMSViewer.Theme;component/Images/Monitor.png"/>
 
                 <Grid x:Name="gridViewer" Background="Black">
-                    <Image x:Name="imgViewer">
+                    <Image x:Name="imgViewer" Stretch="Fill">
                         <Image.ContextMenu>
                             <ContextMenu>
                                 <MenuItem Header="장치정보"/>

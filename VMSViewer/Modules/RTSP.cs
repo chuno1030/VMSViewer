@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Drawing;
 using System.Threading;
 
 using FFmpeg.AutoGen;
@@ -32,7 +33,8 @@ namespace VMSViewer
         /// </summary>
         private System.Timers.Timer ConnectTimer = null;
 
-        public event EventHandler OnDisplayStream;
+        public delegate void DisplayStreamDelegate(Bitmap Bitmap);
+        public event DisplayStreamDelegate onDisplayStream;
 
         public RTSP(Client Client)
         {
@@ -41,15 +43,39 @@ namespace VMSViewer
 
         public void Dispose()
         {
-
+            
         }
 
         public void InitRTSP()
         {
             if(StreamingThread == null)
-            {
                 StreamingThread = new Thread(Streaming);
-                StreamingThread.Start();
+
+            StreamingThread.Start();
+        }
+
+        public void ClearRTSP()
+        {
+            IsDisconnect = false;
+
+            if (ConnectTimer != null)
+            {
+                if (ConnectTimer.Enabled) ConnectTimer.Stop();
+                ConnectTimer.Close();
+                ConnectTimer.Dispose();
+                ConnectTimer = null;
+            }
+
+            if (VideoStreamDecoder != null)
+            {
+                VideoStreamDecoder.Dispose();
+                VideoStreamDecoder = null;
+            }
+
+            if (StreamingThread != null)
+            {
+                if (StreamingThread.IsAlive) StreamingThread.Abort();
+                StreamingThread = null;
             }
         }
 
@@ -70,6 +96,13 @@ namespace VMSViewer
 
             if (VideoStreamDecoder.Connect(Client.RTSPAddress))
             {
+                if(ConnectTimer == null)
+                {
+                    ConnectTimer = new System.Timers.Timer();
+                    ConnectTimer.Interval = TimeSpan.FromMinutes(1).TotalMilliseconds;
+                    ConnectTimer.Elapsed += ConnectTimer_Elapsed;
+                }
+
                 return true;
             }
             else
@@ -83,6 +116,14 @@ namespace VMSViewer
         /// </summary>
         public void Disconnect()
         {
+            IsDisconnect = true;
+        }
+
+        /// <summary>
+        /// RTSP 카메라가 끊어졌을 시 작동하는 타이머
+        /// </summary>
+        private void ConnectTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
+        {
 
         }
 
@@ -91,7 +132,7 @@ namespace VMSViewer
         /// </summary>
         public unsafe void Streaming()
         {
-            Console.WriteLine($"카메라 연결..... -> {Client.RTSPAddress}");
+            Console.WriteLine($"클라이언트 {Client.ClientID}번 카메라 연결..... -> {Client.RTSPAddress}");
 
             if(Connect())
             {
@@ -109,6 +150,7 @@ namespace VMSViewer
                     {
                         if (IsDisconnect)
                         {
+                            ClearRTSP();
                             break;
                         }
 
@@ -126,18 +168,32 @@ namespace VMSViewer
 
                         else
                         {
+                            Bitmap bitmap;
                             FailedDecodeNextFrame = 0;
 
-                            AVFrame targetFrame = VideoFrameConverter.Convert(Decodeframe);
+                            try
+                            {
+                                AVFrame targetFrame = VideoFrameConverter.Convert(Decodeframe);
 
-                            System.Drawing.Bitmap bitmap = new System.Drawing.Bitmap
-                            (
-                                targetFrame.width, 
-                                targetFrame.height, 
-                                targetFrame.linesize[0], 
-                                System.Drawing.Imaging.PixelFormat.Format24bppRgb, 
-                                (IntPtr)targetFrame.data[0]
-                            );
+                                bitmap = new Bitmap
+                                (
+                                    targetFrame.width, 
+                                    targetFrame.height, 
+                                    targetFrame.linesize[0], 
+                                    System.Drawing.Imaging.PixelFormat.Format24bppRgb, 
+                                    (IntPtr)targetFrame.data[0]
+                                );
+                            }
+                            catch (Exception ee)
+                            {
+                                LogManager.Shared.AddLog(ee.StackTrace, ee.Message);
+                                throw;
+                            }
+
+                            if (bitmap == null) continue;
+                            if (onDisplayStream != null) onDisplayStream(bitmap);
+
+                            Thread.Sleep(33);
                         }
                     }
                 }

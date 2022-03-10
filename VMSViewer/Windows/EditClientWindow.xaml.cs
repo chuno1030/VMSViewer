@@ -80,7 +80,10 @@ namespace VMSViewer
                 if (DatabaseManager.Shared.IsUseClientName(IsEdit, EditClient) == false)
                 {
                     if (DatabaseManager.Shared.UPDATE_TB_Client(EditClient))
+                    {
                         EventManager.RefreshClientEvent(EditClient);
+                        this.Close();
+                    }
                     else
                         System.Windows.MessageBox.Show("수정에 실패했습니다.", "장치수정", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
@@ -97,7 +100,10 @@ namespace VMSViewer
                 if(DatabaseManager.Shared.IsUseClientName(IsEdit, NewClient) == false)
                 {
                     if (DatabaseManager.Shared.INSERT_TB_Client(NewClient))
+                    {
                         EventManager.AddClientEvent(NewClient);
+                        this.Close();
+                    }
                     else
                         System.Windows.MessageBox.Show("생성에 실패했습니다.", "장치생성", MessageBoxButton.OK, MessageBoxImage.Error);
                 }

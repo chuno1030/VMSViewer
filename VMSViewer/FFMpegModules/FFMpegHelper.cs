@@ -179,8 +179,7 @@ namespace VMSViewer
             }
             catch (Exception ee)
             {
-                System.Diagnostics.Debug.WriteLine(string.Format("### {0}\r\n{1} ###", ee.StackTrace, ee.Message));
-
+                LogManager.Shared.AddLog(ee.StackTrace, ee.Message);
                 return false;
             }
         }

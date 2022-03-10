@@ -387,7 +387,7 @@ namespace VMSViewer.Module
             string query = "";
 
             if(IsEdit)
-                query = $"SELECT COUNT(*) FROM TB_CLIENT WHERE CLIENT_NAME = '{NewClient.ClientName}' AND GROUP_ID = {NewClient.ClientGroupID} CLIENT_ID <> {NewClient.ClientID}";
+                query = $"SELECT COUNT(*) FROM TB_CLIENT WHERE CLIENT_NAME = '{NewClient.ClientName}' AND GROUP_ID = {NewClient.ClientGroupID} AND CLIENT_ID <> {NewClient.ClientID}";
             else
                 query = $"SELECT COUNT(*) FROM TB_CLIENT WHERE CLIENT_NAME = '{NewClient.ClientName}' AND GROUP_ID = {NewClient.ClientGroupID}";
 
