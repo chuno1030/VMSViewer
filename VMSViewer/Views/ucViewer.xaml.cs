@@ -17,6 +17,11 @@ namespace VMSViewer
         /// </summary>
         private RTSP RTSP = null;
 
+        /// <summary>
+        /// 
+        /// </summary>
+        private MoniterType MoniterType;
+
         public ucViewer()
         {
             InitializeComponent();
@@ -77,9 +82,11 @@ namespace VMSViewer
             switch (MoniterType)
             {
                 case MoniterType.NONE:
+                    MoniterType = MoniterType.NONE;
                     imgBackGround.Visibility = Visibility.Visible;
                     break;
                 case MoniterType.RTSP:
+                    MoniterType = MoniterType.RTSP;
                     gridViewer.Visibility = Visibility.Visible;
                     imgViewer.Visibility = Visibility.Visible;
                     break;
@@ -118,6 +125,46 @@ namespace VMSViewer
             {
                 imgViewer.Source = ConvertBitmapImage(Bitmap);
             }));
+        }
+
+        private void imgViewer_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
+        {
+        }
+
+        private void imgViewer_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
+        {
+        }
+
+        private void btnClick(object sender, RoutedEventArgs e)
+        {
+            Button btn = sender as Button;
+
+            if (btn == null) return;
+            if (btn.Tag == null) return;
+
+            string tag = btn.Tag.ToString();
+
+            switch (tag)
+            {
+                case "GetClientInfo":
+                    break;
+                case "FullScreen":
+                    break;
+                case "DeleteClient":
+                    break;
+            }
+        }
+
+        private void UserControl_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
+        {
+            menuGrid.Visibility = Visibility.Visible;
+
+        }
+
+        private void UserControl_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
+        {
+            menuGrid.Visibility = Visibility.Hidden;
+
         }
     }
 }

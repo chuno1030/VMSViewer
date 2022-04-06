@@ -70,6 +70,8 @@ namespace VMSViewer
 
         private void topGrid_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
+            if (e.RightButton == MouseButtonState.Pressed || e.RightButton == MouseButtonState.Released) return;
+
             if (e.ClickCount == 2)
             {
                 switch (this.WindowState)
