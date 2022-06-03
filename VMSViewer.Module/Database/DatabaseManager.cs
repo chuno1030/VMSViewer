@@ -54,13 +54,12 @@ namespace VMSViewer.Module
             }
             catch (Exception ee)
             {
-                Console.WriteLine(ee.StackTrace);
-                Console.WriteLine($"### {ee.Message} ###");
+                LogManager.Shared.AddLog($"{ee.StackTrace}\r\n{ee.Message}");
                 return null;
             }
         }
 
-        public bool INSERT_TB_ClientGroup(ClientGroup NewClientGroup)
+        public bool INSERT_TB_ClientGroup(ClientGroup ClientGroup)
         {
             string query = "INSERT INTO TB_CLIENTGROUP(GROUP_NAME) VALUES(@p1)";
 
@@ -72,7 +71,7 @@ namespace VMSViewer.Module
                     {
                         conn.Open();
 
-                        cmd.Parameters.AddWithValue("@p1", NewClientGroup.ClientGroupName);
+                        cmd.Parameters.AddWithValue("@p1", ClientGroup.ClientGroupName);
                         cmd.ExecuteNonQuery();
                     }
                 }
@@ -81,15 +80,14 @@ namespace VMSViewer.Module
             }
             catch (Exception ee)
             {
-                Console.WriteLine(ee.Message);
-
+                LogManager.Shared.AddLog($"{ee.StackTrace}\r\n{ee.Message}");
                 return false;
             }
         }
 
-        public bool UPDATE_TB_ClientGroup(ClientGroup UpdateClientGroup)
+        public bool UPDATE_TB_ClientGroup(ClientGroup ClientGroup)
         {
-            string query = $"UPDATE TB_CLIENTGROUP SET GROUP_NAME = @p1 WHERE GROUP_ID = {UpdateClientGroup.ClientGroupID}";
+            string query = $"UPDATE TB_CLIENTGROUP SET GROUP_NAME = @p1 WHERE GROUP_ID = {ClientGroup.ClientGroupID}";
 
             try
             {
@@ -99,7 +97,7 @@ namespace VMSViewer.Module
                     {
                         conn.Open();
 
-                        cmd.Parameters.AddWithValue("@p1", UpdateClientGroup.ClientGroupName);
+                        cmd.Parameters.AddWithValue("@p1", ClientGroup.ClientGroupName);
                         cmd.ExecuteNonQuery();
                     }
                 }
@@ -108,15 +106,14 @@ namespace VMSViewer.Module
             }
             catch (Exception ee)
             {
-                Console.WriteLine(ee.Message);
-
+                LogManager.Shared.AddLog($"{ee.StackTrace}\r\n{ee.Message}");
                 return false;
             }
         }
 
-        public bool DELETE_TB_ClientGroup(ClientGroup DeleteClientGroup)
+        public bool DELETE_TB_ClientGroup(ClientGroup ClientGroup)
         {
-            string query = $"DELETE FROM TB_CLIENTGROUP WHERE GROUP_ID = {DeleteClientGroup.ClientGroupID}";
+            string query = $"DELETE FROM TB_CLIENTGROUP WHERE GROUP_ID = {ClientGroup.ClientGroupID}";
 
             try
             {
@@ -133,7 +130,7 @@ namespace VMSViewer.Module
             }
             catch (Exception ee)
             {
-                Console.WriteLine(ee.Message);
+                LogManager.Shared.AddLog($"{ee.StackTrace}\r\n{ee.Message}");
                 return false;
             }
         }
@@ -164,8 +161,7 @@ namespace VMSViewer.Module
             }
             catch (Exception ee)
             {
-                Console.WriteLine(ee.Message);
-
+                LogManager.Shared.AddLog($"{ee.StackTrace}\r\n{ee.Message}");
                 return false;
             }
         }
@@ -195,8 +191,7 @@ namespace VMSViewer.Module
             }
             catch (Exception ee)
             {
-                Console.WriteLine(ee.Message);
-
+                LogManager.Shared.AddLog($"{ee.StackTrace}\r\n{ee.Message}");
                 return false;
             }
         }
@@ -238,13 +233,12 @@ namespace VMSViewer.Module
             }
             catch (Exception ee)
             {
-                Console.WriteLine(ee.StackTrace);
-                Console.WriteLine($"### {ee.Message} ###");
+                LogManager.Shared.AddLog($"{ee.StackTrace}\r\n{ee.Message}");
                 return null;
             }
         }
 
-        public bool INSERT_TB_Client(Client NewClient)
+        public bool INSERT_TB_Client(Client Client)
         {
             string query = "INSERT INTO TB_CLIENT(GROUP_ID, CLIENT_NAME, CLIENT_IP, RTSP_ADDRESS) VALUES(@p1, @p2, @p3, @p4)";
 
@@ -256,10 +250,10 @@ namespace VMSViewer.Module
                     {
                         conn.Open();
 
-                        cmd.Parameters.AddWithValue("@p1", NewClient.ClientGroupID);
-                        cmd.Parameters.AddWithValue("@p2", NewClient.ClientName);
-                        cmd.Parameters.AddWithValue("@p3", NewClient.ClientIP);
-                        cmd.Parameters.AddWithValue("@p4", NewClient.RTSPAddress);
+                        cmd.Parameters.AddWithValue("@p1", Client.ClientGroupID);
+                        cmd.Parameters.AddWithValue("@p2", Client.ClientName);
+                        cmd.Parameters.AddWithValue("@p3", Client.ClientIP);
+                        cmd.Parameters.AddWithValue("@p4", Client.RTSPAddress);
                         cmd.ExecuteNonQuery();
                     }
                 }
@@ -268,16 +262,14 @@ namespace VMSViewer.Module
             }
             catch (Exception ee)
             {
-                Console.WriteLine(ee.StackTrace);
-                Console.WriteLine($"### {ee.Message} ###");
-
+                LogManager.Shared.AddLog($"{ee.StackTrace}\r\n{ee.Message}");
                 return false;
             }
         }
 
-        public bool UPDATE_TB_Client(Client UpdateClient)
+        public bool UPDATE_TB_Client(Client Client)
         {
-            string query = $"UPDATE TB_CLIENT SET CLIENT_NAME = @p1 WHERE CLIENT_ID = {UpdateClient.ClientID}";
+            string query = $"UPDATE TB_CLIENT SET CLIENT_NAME = @p1, CLIENT_IP = @p2, RTSP_ADDRESS = @p3 WHERE CLIENT_ID = {Client.ClientID}";
 
             try
             {
@@ -287,7 +279,9 @@ namespace VMSViewer.Module
                     {
                         conn.Open();
 
-                        cmd.Parameters.AddWithValue("@p1", UpdateClient.ClientName);
+                        cmd.Parameters.AddWithValue("@p1", Client.ClientName);
+                        cmd.Parameters.AddWithValue("@p2", Client.ClientIP);
+                        cmd.Parameters.AddWithValue("@p3", Client.RTSPAddress);
                         cmd.ExecuteNonQuery();
                     }
                 }
@@ -296,15 +290,14 @@ namespace VMSViewer.Module
             }
             catch (Exception ee)
             {
-                Console.WriteLine(ee.Message);
-
+                LogManager.Shared.AddLog($"{ee.StackTrace}\r\n{ee.Message}");
                 return false;
             }
         }
 
-        public bool DELETE_TB_Client(Client DeleteClient)
+        public bool DELETE_TB_Client(Client Client)
         {
-            string query = $"DELETE FROM TB_CLIENT WHERE CLIENT_ID = {DeleteClient.ClientID}";
+            string query = $"DELETE FROM TB_CLIENT WHERE CLIENT_ID = {Client.ClientID}";
 
             try
             {
@@ -321,7 +314,7 @@ namespace VMSViewer.Module
             }
             catch (Exception ee)
             {
-                Console.WriteLine(ee.Message);
+                LogManager.Shared.AddLog($"{ee.StackTrace}\r\n{ee.Message}");
                 return false;
             }
         }
@@ -345,7 +338,7 @@ namespace VMSViewer.Module
             }
             catch (Exception ee)
             {
-                Console.WriteLine(ee.Message);
+                LogManager.Shared.AddLog($"{ee.StackTrace}\r\n{ee.Message}");
                 return false;
             }
         }
@@ -376,20 +369,19 @@ namespace VMSViewer.Module
             }
             catch (Exception ee)
             {
-                Console.WriteLine(ee.Message);
-
+                LogManager.Shared.AddLog($"{ee.StackTrace}\r\n{ee.Message}");
                 return false;
             }
         }
 
-        public bool IsUseClientName(bool IsEdit, Client NewClient)
+        public bool IsUseClientName(bool IsEdit, Client Client)
         {
             string query = "";
 
             if(IsEdit)
-                query = $"SELECT COUNT(*) FROM TB_CLIENT WHERE CLIENT_NAME = '{NewClient.ClientName}' AND GROUP_ID = {NewClient.ClientGroupID} AND CLIENT_ID <> {NewClient.ClientID}";
+                query = $"SELECT COUNT(*) FROM TB_CLIENT WHERE CLIENT_NAME = '{Client.ClientName}' AND GROUP_ID = {Client.ClientGroupID} AND CLIENT_ID <> {Client.ClientID}";
             else
-                query = $"SELECT COUNT(*) FROM TB_CLIENT WHERE CLIENT_NAME = '{NewClient.ClientName}' AND GROUP_ID = {NewClient.ClientGroupID}";
+                query = $"SELECT COUNT(*) FROM TB_CLIENT WHERE CLIENT_NAME = '{Client.ClientName}' AND GROUP_ID = {Client.ClientGroupID}";
 
             try
             {
@@ -407,8 +399,7 @@ namespace VMSViewer.Module
             }
             catch (Exception ee)
             {
-                Console.WriteLine(ee.Message);
-
+                LogManager.Shared.AddLog($"{ee.StackTrace}\r\n{ee.Message}");
                 return false;
             }
         }

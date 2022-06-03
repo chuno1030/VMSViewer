@@ -26,7 +26,7 @@ namespace VMSViewer
             }
             catch (Exception ee)
             {
-                LogManager.Shared.AddLog(ee.StackTrace, ee.Message);
+                LogManager.Shared.AddLog($"{ee.StackTrace}\r\n{ee.Message}");
                 System.Windows.MessageBox.Show($"{ee.Message}\n프로그램을 종료합니다.", "오류", MessageBoxButton.OK, MessageBoxImage.Error);
                 System.Windows.Application.Current.Shutdown();
             }
@@ -48,7 +48,7 @@ namespace VMSViewer
             }
             catch (Exception ee)
             {
-                LogManager.Shared.AddLog(ee.StackTrace, ee.Message);
+                LogManager.Shared.AddLog($"{ee.StackTrace}\r\n{ee.Message}");
                 return false;
             }
         }

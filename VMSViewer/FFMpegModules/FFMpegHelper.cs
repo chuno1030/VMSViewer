@@ -179,7 +179,7 @@ namespace VMSViewer
             }
             catch (Exception ee)
             {
-                LogManager.Shared.AddLog(ee.StackTrace, ee.Message);
+                LogManager.Shared.AddLog($"{ee.StackTrace}\r\n{ee.Message}");
                 return false;
             }
         }

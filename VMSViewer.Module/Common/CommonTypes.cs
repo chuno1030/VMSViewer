@@ -22,4 +22,14 @@ namespace VMSViewer
         /* 등록*/
         RTSP = 1
     }
+
+    /// <summary>
+    /// 카메라 연결타입
+    /// </summary>
+    public enum ConnectionStatus
+    {
+        Connecting = 0,
+        Connected,
+        Disconnected,
+    }
 }

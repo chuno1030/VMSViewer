@@ -37,15 +37,7 @@ namespace VMSViewer
 
         private void UserControl_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            if(RTSP != null)
-            {
-                RTSP.onDisplayStream -= RTSP_onDisplayStream;
-                RTSP.Disconnect();
-                RTSP.Dispose();
-                RTSP = null;
-            }
-
-            GC.Collect();
+            ClearClient();
         }
 
         /// <summary>
@@ -56,10 +48,8 @@ namespace VMSViewer
            if(e.Data.GetDataPresent("Client"))
            {
                 var client = e.Data.GetData("Client") as Client;
-
                 if (client == null) return;
 
-                SetViewer(MoniterType.RTSP);
                 InitClient(client);
            }
         }
@@ -70,53 +60,32 @@ namespace VMSViewer
         }
 
         /// <summary>
-        /// 뷰어화면 SET
-        /// </summary>
-        private void SetViewer(MoniterType MoniterType)
-        {
-            imgBackGround.Visibility = Visibility.Hidden;
-
-            gridViewer.Visibility = Visibility.Hidden;
-            imgViewer.Visibility = Visibility.Hidden;
-
-            switch (MoniterType)
-            {
-                case MoniterType.NONE:
-                    MoniterType = MoniterType.NONE;
-                    imgBackGround.Visibility = Visibility.Visible;
-                    break;
-                case MoniterType.RTSP:
-                    MoniterType = MoniterType.RTSP;
-                    gridViewer.Visibility = Visibility.Visible;
-                    imgViewer.Visibility = Visibility.Visible;
-                    break;
-            }
-        }
-
-        /// <summary>
         /// 클라이언트 스트리밍
         /// </summary>
         private void InitClient(Client Client)
         {
-            if(RTSP == null)
+            SetViewer(MoniterType.RTSP, Client);
+
+            if (RTSP == null)
             {
                 RTSP = new RTSP(Client);
                 RTSP.onDisplayStream += RTSP_onDisplayStream;
+                RTSP.onConnectionStatus += RTSP_onConnectionStatus;
                 RTSP.InitRTSP();
             }
         }
-
-        private BitmapImage ConvertBitmapImage(System.Drawing.Bitmap bitmap)
+        private void ClearClient()
         {
-            System.IO.MemoryStream ms = new System.IO.MemoryStream();
-            bitmap.Save(ms, System.Drawing.Imaging.ImageFormat.Bmp);
-            BitmapImage image = new BitmapImage();
-            image.BeginInit();
-            ms.Seek(0, System.IO.SeekOrigin.Begin);
-            image.StreamSource = ms;
-            image.EndInit();
+            if (RTSP != null)
+            {
+                RTSP.onDisplayStream -= RTSP_onDisplayStream;
+                RTSP.onConnectionStatus -= RTSP_onConnectionStatus;
+                RTSP.Disconnect();
+                RTSP = null;
+            }
 
-            return image;
+            ClearViewer();
+            GC.Collect();
         }
 
         private void RTSP_onDisplayStream(System.Drawing.Bitmap Bitmap)
@@ -125,6 +94,63 @@ namespace VMSViewer
             {
                 imgViewer.Source = ConvertBitmapImage(Bitmap);
             }));
+        }
+
+        private void RTSP_onConnectionStatus(ConnectionStatus ConnectionStatus)
+        {
+            this.Dispatcher.Invoke(System.Windows.Threading.DispatcherPriority.Normal, new Action(delegate
+            {
+                txtConnectionStatus.Text = "";
+
+                switch (ConnectionStatus)
+                {
+                    case ConnectionStatus.Connecting:
+                        txtConnectionStatus.Text = "[연결 중]";
+                        break;
+                    case ConnectionStatus.Connected:
+                        txtConnectionStatus.Text = "[연결]";
+                        break;
+                    case ConnectionStatus.Disconnected:
+                        txtConnectionStatus.Text = "[연결실패]";
+                        break;
+                }
+            }));
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        private void SetViewer(MoniterType MoniterType, Client Client = null)
+        {
+            imgBackGround.Visibility = Visibility.Hidden;
+
+            gridViewer.Visibility = Visibility.Hidden;
+            imgViewer.Visibility = Visibility.Hidden;
+
+            txtConnectionStatus.Text = "";
+
+            switch (MoniterType)
+            {
+                case MoniterType.NONE:
+                    txtClientName.Text = "";
+                    MoniterType = MoniterType.NONE;
+                    imgBackGround.Visibility = Visibility.Visible;
+                    break;
+                case MoniterType.RTSP:
+                    txtClientName.Text = Client.ClientName;
+                    gridViewer.Visibility = Visibility.Visible;
+                    imgViewer.Visibility = Visibility.Visible;
+                    break;
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        private void ClearViewer()
+        {
+            imgViewer.Source = null;
+            SetViewer(MoniterType.NONE);
         }
 
         private void imgViewer_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
@@ -151,6 +177,8 @@ namespace VMSViewer
                 case "FullScreen":
                     break;
                 case "DeleteClient":
+                    if(RTSP != null)
+                        ClearClient();
                     break;
             }
         }
@@ -158,13 +186,24 @@ namespace VMSViewer
         private void UserControl_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
         {
             menuGrid.Visibility = Visibility.Visible;
-
         }
 
         private void UserControl_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
         {
             menuGrid.Visibility = Visibility.Hidden;
+        }
 
+        private BitmapImage ConvertBitmapImage(System.Drawing.Bitmap bitmap)
+        {
+            System.IO.MemoryStream ms = new System.IO.MemoryStream();
+            bitmap.Save(ms, System.Drawing.Imaging.ImageFormat.Bmp);
+            BitmapImage image = new BitmapImage();
+            image.BeginInit();
+            ms.Seek(0, System.IO.SeekOrigin.Begin);
+            image.StreamSource = ms;
+            image.EndInit();
+
+            return image;
         }
     }
 }

@@ -8,6 +8,14 @@ namespace VMSViewer
 {
     public class RTSP : IDisposable
     {
+        #region Events
+        public delegate void DisplayStreamDelegate(Bitmap Bitmap);
+        public event DisplayStreamDelegate onDisplayStream;
+
+        public delegate void ConnectionStatusDelegate(ConnectionStatus ConnectionStatus);
+        public event ConnectionStatusDelegate onConnectionStatus;
+        #endregion
+
         /// <summary>
         /// 클라이언트
         /// </summary>
@@ -33,9 +41,6 @@ namespace VMSViewer
         /// </summary>
         private System.Timers.Timer ConnectTimer = null;
 
-        public delegate void DisplayStreamDelegate(Bitmap Bitmap);
-        public event DisplayStreamDelegate onDisplayStream;
-
         public RTSP(Client Client)
         {
             this.Client = Client;
@@ -43,7 +48,7 @@ namespace VMSViewer
 
         public void Dispose()
         {
-            
+            ClearRTSP();
         }
 
         public void InitRTSP()
@@ -77,36 +82,40 @@ namespace VMSViewer
                 if (StreamingThread.IsAlive) StreamingThread.Abort();
                 StreamingThread = null;
             }
+
+            GC.Collect();
         }
 
         /// <summary>
         /// 현재 카메라가 연결 중인지 확인
         /// </summary>
-        public bool IsConnect()
-        {
-            return false;
-        }
+        public bool IsConnect() { return VideoStreamDecoder.IsConnect(); }
 
         /// <summary>
         /// RTSP 연결
         /// </summary>
         private bool Connect()
         {
-            if (VideoStreamDecoder == null) VideoStreamDecoder = new VideoStreamDecoder();
+            if (onConnectionStatus != null) onConnectionStatus(ConnectionStatus.Connecting);
 
+            if (ConnectTimer == null)
+            {
+                ConnectTimer = new System.Timers.Timer();
+                //ConnectTimer.Interval = TimeSpan.FromMinutes(1).TotalMilliseconds;
+                ConnectTimer.Interval = TimeSpan.FromSeconds(15).TotalMilliseconds;
+                ConnectTimer.Elapsed += ConnectTimer_Elapsed;
+            }
+
+            if (VideoStreamDecoder == null) VideoStreamDecoder = new VideoStreamDecoder();
             if (VideoStreamDecoder.Connect(Client.RTSPAddress))
             {
-                if(ConnectTimer == null)
-                {
-                    ConnectTimer = new System.Timers.Timer();
-                    ConnectTimer.Interval = TimeSpan.FromMinutes(1).TotalMilliseconds;
-                    ConnectTimer.Elapsed += ConnectTimer_Elapsed;
-                }
-
+                if (onConnectionStatus != null) onConnectionStatus(ConnectionStatus.Connected);
                 return true;
             }
             else
             {
+                if (onConnectionStatus != null) onConnectionStatus(ConnectionStatus.Disconnected);
+                ConnectTimer.Start();
                 return false;
             }    
         }
@@ -116,6 +125,7 @@ namespace VMSViewer
         /// </summary>
         public void Disconnect()
         {
+            Console.WriteLine($"### 클라이언트 {Client.ClientID}번 카메라 연결해제 ###");
             IsDisconnect = true;
         }
 
@@ -132,7 +142,7 @@ namespace VMSViewer
         /// </summary>
         public unsafe void Streaming()
         {
-            Console.WriteLine($"클라이언트 {Client.ClientID}번 카메라 연결..... -> {Client.RTSPAddress}");
+            Console.WriteLine($"### 클라이언트 {Client.ClientID}번 카메라 연결..... -> {Client.RTSPAddress} ###");
 
             if(Connect())
             {
@@ -186,7 +196,7 @@ namespace VMSViewer
                             }
                             catch (Exception ee)
                             {
-                                LogManager.Shared.AddLog(ee.StackTrace, ee.Message);
+                                LogManager.Shared.AddLog($"{ee.StackTrace}\r\n{ee.Message}");
                                 throw;
                             }
 

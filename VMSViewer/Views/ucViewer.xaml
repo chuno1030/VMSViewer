@@ -5,7 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:VMSViewer"
              mc:Ignorable="d" 
-             d:DesignHeight="0" d:DesignWidth="0"
+             d:DesignHeight="500" d:DesignWidth="500"
              AllowDrop="True"
              Background="Transparent"
              Loaded="UserControl_Loaded" PreviewDrop="UserControl_PreviewDrop"
@@ -26,12 +26,33 @@
                             Height="30"
                             BorderBrush="Black"  
                             BorderThickness="0,0,0,1"
-                            Visibility="Hidden"
+                            Visibility="Visible"
                             VerticalAlignment="Top">
                         <Grid Background="Black"
                               Opacity="0.5">
                             <StackPanel Orientation="Horizontal"
+                                        VerticalAlignment="Center"
+                                        HorizontalAlignment="Left">
+
+                                <TextBlock x:Name="txtConnectionStatus"
+                                           Text="[연결]"
+                                           Margin="5,0,0,0"
+                                           Foreground="White"
+                                           FontSize="18"/>
+
+                                <TextBlock x:Name="txtClientName"
+                                           Text="VMSViewer"
+                                           Margin="5,0,0,0"
+                                           Foreground="White"
+                                           FontSize="18"/>
+                            </StackPanel>
+                            
+                            <StackPanel Orientation="Horizontal"
+                                        VerticalAlignment="Center"
                                         HorizontalAlignment="Right">
+                                
+
+
                                 <Button x:Name="btnGetClientInfo"
                                         Tag="GetClientInfo"
                                         Margin="0,0,5,0"

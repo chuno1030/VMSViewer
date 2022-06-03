@@ -55,7 +55,7 @@ namespace VMSViewer
 
         private void DoFinal()
         {
-
+            LogManager.Shared.AddLog("### 프로그램 종료 ###");
         }
 
         private void ChangeSize(double width, double height)
