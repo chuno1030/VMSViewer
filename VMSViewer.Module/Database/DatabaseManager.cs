@@ -21,11 +21,11 @@ namespace VMSViewer.Module
             }
         }
 
-        #region TB_ClientGroup(SELECT/INSERT/UPDATE/DELETE/COUNT/중복체크)
-        public List<ClientGroup> SELECT_TB_ClientGroup()
+        #region TB_DeviceGroup(SELECT/INSERT/UPDATE/DELETE/COUNT/중복체크)
+        public List<DeviceGroup> SELECT_TB_DeviceGroup()
         {
-            string query = "SELECT * FROM TB_ClientGroup";
-            List<ClientGroup> ClientGroupList = new List<ClientGroup>();
+            string query = "SELECT * FROM TB_DEVICEGROUP";
+            List<DeviceGroup> DeviceGroupList = new List<DeviceGroup>();
 
             try
             {
@@ -39,18 +39,18 @@ namespace VMSViewer.Module
                         {
                             while (rdr.Read())
                             {
-                                ClientGroup item = new ClientGroup();
+                                DeviceGroup item = new DeviceGroup();
 
-                                item.ClientGroupID = Convert.ToInt32(rdr["GROUP_ID"]);
-                                item.ClientGroupName = Convert.ToString(rdr["GROUP_NAME"]);
+                                item.DeviceGroupID = Convert.ToInt32(rdr["DEVICE_GROUP_ID"]);
+                                item.DeviceGroupName = Convert.ToString(rdr["DEVICE_GROUP_NAME"]);
 
-                                ClientGroupList.Add(item);
+                                DeviceGroupList.Add(item);
                             }
                         }
                     }
                 }
 
-                return ClientGroupList;
+                return DeviceGroupList;
             }
             catch (Exception ee)
             {
@@ -59,9 +59,9 @@ namespace VMSViewer.Module
             }
         }
 
-        public bool INSERT_TB_ClientGroup(ClientGroup ClientGroup)
+        public bool INSERT_TB_DeviceGroup(DeviceGroup DeviceGroup)
         {
-            string query = "INSERT INTO TB_CLIENTGROUP(GROUP_NAME) VALUES(@p1)";
+            string query = "INSERT INTO TB_DEVICEGROUP(DEVICE_GROUP_NAME) VALUES(@p1)";
 
             try
             {
@@ -71,7 +71,7 @@ namespace VMSViewer.Module
                     {
                         conn.Open();
 
-                        cmd.Parameters.AddWithValue("@p1", ClientGroup.ClientGroupName);
+                        cmd.Parameters.AddWithValue("@p1", DeviceGroup.DeviceGroupName);
                         cmd.ExecuteNonQuery();
                     }
                 }
@@ -85,9 +85,9 @@ namespace VMSViewer.Module
             }
         }
 
-        public bool UPDATE_TB_ClientGroup(ClientGroup ClientGroup)
+        public bool UPDATE_TB_DeviceGroup(DeviceGroup DeviceGroup)
         {
-            string query = $"UPDATE TB_CLIENTGROUP SET GROUP_NAME = @p1 WHERE GROUP_ID = {ClientGroup.ClientGroupID}";
+            string query = $"UPDATE TB_DEVICEGROUP SET DEVICE_GROUP_NAME = @p1 WHERE DEVICE_GROUP_ID = {DeviceGroup.DeviceGroupID}";
 
             try
             {
@@ -97,7 +97,7 @@ namespace VMSViewer.Module
                     {
                         conn.Open();
 
-                        cmd.Parameters.AddWithValue("@p1", ClientGroup.ClientGroupName);
+                        cmd.Parameters.AddWithValue("@p1", DeviceGroup.DeviceGroupName);
                         cmd.ExecuteNonQuery();
                     }
                 }
@@ -111,9 +111,9 @@ namespace VMSViewer.Module
             }
         }
 
-        public bool DELETE_TB_ClientGroup(ClientGroup ClientGroup)
+        public bool DELETE_TB_DeviceGroup(DeviceGroup DeviceGroup)
         {
-            string query = $"DELETE FROM TB_CLIENTGROUP WHERE GROUP_ID = {ClientGroup.ClientGroupID}";
+            string query = $"DELETE FROM TB_DEVICEGROUP WHERE DEVICE_GROUP_ID = {DeviceGroup.DeviceGroupID}";
 
             try
             {
@@ -135,10 +135,10 @@ namespace VMSViewer.Module
             }
         }
 
-        public bool IsOverCountClientGroup()
+        public bool IsOverCountDeviceGroup()
         {
             bool IsOver = false;
-            string query = $"SELECT COUNT(*) FROM TB_ClientGroup";
+            string query = $"SELECT COUNT(*) FROM TB_DEVICEGROUP";
 
             try
             {
@@ -166,14 +166,14 @@ namespace VMSViewer.Module
             }
         }
 
-        public bool IsUseClientGroupName(bool IsEdit, ClientGroup ClientGroup)
+        public bool IsUseDeviceGroupName(bool IsEdit, DeviceGroup DeviceGroup)
         {
             string query = "";
 
             if (IsEdit)
-                query = $"SELECT COUNT(*) FROM TB_ClientGroup WHERE GROUP_NAME = '{ClientGroup.ClientGroupName}' AND GROUP_ID <> {ClientGroup.ClientGroupID}";
+                query = $"SELECT COUNT(*) FROM TB_DEVICEGROUP WHERE DEVICE_GROUP_NAME = '{DeviceGroup.DeviceGroupName}' AND DEVICE_GROUP_ID <> {DeviceGroup.DeviceGroupID}";
             else
-                query = $"SELECT COUNT(*) FROM TB_ClientGroup WHERE GROUP_NAME = '{ClientGroup.ClientGroupName}'";
+                query = $"SELECT COUNT(*) FROM TB_DEVICEGROUP WHERE DEVICE_GROUP_NAME = '{DeviceGroup.DeviceGroupName}'";
 
             try
             {
@@ -197,11 +197,11 @@ namespace VMSViewer.Module
         }
         #endregion
 
-        #region TB_Client(SELECT/INSERT/UPDATE/DELETE/DELETE_ALL/COUNT/중복체크)
-        public List<Client> SELECT_TB_Client(ClientGroup ClientGroup)
+        #region TB_Device(SELECT/INSERT/UPDATE/DELETE/DELETE_ALL/COUNT/중복체크)
+        public List<Device> SELECT_TB_Device(DeviceGroup DeviceGroup)
         {
-            string query = $"SELECT * FROM TB_Client WHERE GROUP_ID = {ClientGroup.ClientGroupID}";
-            List<Client> ClientList = new List<Client>();
+            string query = $"SELECT * FROM TB_DEVICE WHERE DEVICE_GROUP_ID = {DeviceGroup.DeviceGroupID}";
+            List<Device> DeviceList = new List<Device>();
 
             try
             {
@@ -215,21 +215,21 @@ namespace VMSViewer.Module
                         {
                             while (rdr.Read())
                             {
-                                Client item = new Client();
+                                Device item = new Device();
 
-                                item.ClientID = Convert.ToInt32(rdr["CLIENT_ID"]);
-                                item.ClientGroupID = Convert.ToInt32(rdr["GROUP_ID"]);
-                                item.ClientName = Convert.ToString(rdr["CLIENT_NAME"]);
-                                item.ClientIP = Convert.ToString(rdr["CLIENT_IP"]);
-                                item.RTSPAddress = Convert.ToString(rdr["RTSP_ADDRESS"]);
+                                item.DeviceID = Convert.ToInt32(rdr["DEVICE_ID"]);
+                                item.DeviceGroupID = Convert.ToInt32(rdr["DEVICE_GROUP_ID"]);
+                                item.DeviceName = Convert.ToString(rdr["DEVICE_NAME"]);
+                                item.DeviceIP = Convert.ToString(rdr["DEVICE_IP"]);
+                                item.RTSPAddress = Convert.ToString(rdr["DEVICE_RTSP_ADDRESS"]);
 
-                                ClientList.Add(item);
+                                DeviceList.Add(item);
                             }
                         }
                     }
                 }
 
-                return ClientList;
+                return DeviceList;
             }
             catch (Exception ee)
             {
@@ -238,9 +238,9 @@ namespace VMSViewer.Module
             }
         }
 
-        public bool INSERT_TB_Client(Client Client)
+        public bool INSERT_TB_Device(Device Device)
         {
-            string query = "INSERT INTO TB_CLIENT(GROUP_ID, CLIENT_NAME, CLIENT_IP, RTSP_ADDRESS) VALUES(@p1, @p2, @p3, @p4)";
+            string query = "INSERT INTO TB_DEVICE(DEVICE_GROUP_ID, DEVICE_NAME, DEVICE_IP, DEVICE_RTSP_ADDRESS) VALUES(@p1, @p2, @p3, @p4)";
 
             try
             {
@@ -250,10 +250,10 @@ namespace VMSViewer.Module
                     {
                         conn.Open();
 
-                        cmd.Parameters.AddWithValue("@p1", Client.ClientGroupID);
-                        cmd.Parameters.AddWithValue("@p2", Client.ClientName);
-                        cmd.Parameters.AddWithValue("@p3", Client.ClientIP);
-                        cmd.Parameters.AddWithValue("@p4", Client.RTSPAddress);
+                        cmd.Parameters.AddWithValue("@p1", Device.DeviceGroupID);
+                        cmd.Parameters.AddWithValue("@p2", Device.DeviceName);
+                        cmd.Parameters.AddWithValue("@p3", Device.DeviceIP);
+                        cmd.Parameters.AddWithValue("@p4", Device.RTSPAddress);
                         cmd.ExecuteNonQuery();
                     }
                 }
@@ -267,9 +267,9 @@ namespace VMSViewer.Module
             }
         }
 
-        public bool UPDATE_TB_Client(Client Client)
+        public bool UPDATE_TB_Device(Device Device)
         {
-            string query = $"UPDATE TB_CLIENT SET CLIENT_NAME = @p1, CLIENT_IP = @p2, RTSP_ADDRESS = @p3 WHERE CLIENT_ID = {Client.ClientID}";
+            string query = $"UPDATE TB_DEVICE SET DEVICE_NAME = @p1, DEVICE_IP = @p2, DEVICE_RTSP_ADDRESS = @p3 WHERE DEVICE_ID = {Device.DeviceID}";
 
             try
             {
@@ -279,9 +279,9 @@ namespace VMSViewer.Module
                     {
                         conn.Open();
 
-                        cmd.Parameters.AddWithValue("@p1", Client.ClientName);
-                        cmd.Parameters.AddWithValue("@p2", Client.ClientIP);
-                        cmd.Parameters.AddWithValue("@p3", Client.RTSPAddress);
+                        cmd.Parameters.AddWithValue("@p1", Device.DeviceName);
+                        cmd.Parameters.AddWithValue("@p2", Device.DeviceIP);
+                        cmd.Parameters.AddWithValue("@p3", Device.RTSPAddress);
                         cmd.ExecuteNonQuery();
                     }
                 }
@@ -295,33 +295,9 @@ namespace VMSViewer.Module
             }
         }
 
-        public bool DELETE_TB_Client(Client Client)
+        public bool DELETE_TB_Device(Device Device)
         {
-            string query = $"DELETE FROM TB_CLIENT WHERE CLIENT_ID = {Client.ClientID}";
-
-            try
-            {
-                using (MySqlConnection conn = new MySqlConnection(DatebaseInformation.connectionString))
-                {
-                    using (MySqlCommand cmd = new MySqlCommand(query, conn))
-                    {
-                        conn.Open();
-                        cmd.ExecuteNonQuery();
-                    }
-                }
-
-                return true;
-            }
-            catch (Exception ee)
-            {
-                LogManager.Shared.AddLog($"{ee.StackTrace}\r\n{ee.Message}");
-                return false;
-            }
-        }
-
-        public bool ALL_DELETE_TB_Client(ClientGroup ClientGroup)
-        {
-            string query = $"DELETE FROM TB_CLIENT WHERE GROUP_ID = {ClientGroup.ClientGroupID}";
+            string query = $"DELETE FROM TB_DEVICE WHERE DEVICE_ID = {Device.DeviceID}";
 
             try
             {
@@ -343,10 +319,34 @@ namespace VMSViewer.Module
             }
         }
 
-        public bool IsOverCountClient(int ClientGroupID)
+        public bool ALL_DELETE_TB_Device(DeviceGroup DeviceGroup)
+        {
+            string query = $"DELETE FROM TB_DEVICE WHERE DEVICE_GROUP_ID = {DeviceGroup.DeviceGroupID}";
+
+            try
+            {
+                using (MySqlConnection conn = new MySqlConnection(DatebaseInformation.connectionString))
+                {
+                    using (MySqlCommand cmd = new MySqlCommand(query, conn))
+                    {
+                        conn.Open();
+                        cmd.ExecuteNonQuery();
+                    }
+                }
+
+                return true;
+            }
+            catch (Exception ee)
+            {
+                LogManager.Shared.AddLog($"{ee.StackTrace}\r\n{ee.Message}");
+                return false;
+            }
+        }
+
+        public bool IsOverCountDevice(int DeviceGroupID)
         {
             bool IsOver = false;
-            string query = $"SELECT COUNT(*) FROM TB_Client WHERE GROUP_ID = {ClientGroupID}";
+            string query = $"SELECT COUNT(*) FROM TB_DEVICE WHERE DEVICE_GROUP_ID = {DeviceGroupID}";
 
             try
             {
@@ -374,14 +374,14 @@ namespace VMSViewer.Module
             }
         }
 
-        public bool IsUseClientName(bool IsEdit, Client Client)
+        public bool IsUseDeviceName(bool IsEdit, Device Device)
         {
             string query = "";
 
             if(IsEdit)
-                query = $"SELECT COUNT(*) FROM TB_CLIENT WHERE CLIENT_NAME = '{Client.ClientName}' AND GROUP_ID = {Client.ClientGroupID} AND CLIENT_ID <> {Client.ClientID}";
+                query = $"SELECT COUNT(*) FROM TB_DEVICE WHERE DEVICE_NAME = '{Device.DeviceName}' AND DEVICE_GROUP_ID = {Device.DeviceGroupID} AND DEVICE_ID <> {Device.DeviceID}";
             else
-                query = $"SELECT COUNT(*) FROM TB_CLIENT WHERE CLIENT_NAME = '{Client.ClientName}' AND GROUP_ID = {Client.ClientGroupID}";
+                query = $"SELECT COUNT(*) FROM TB_DEVICE WHERE DEVICE_NAME = '{Device.DeviceName}' AND DEVICE_GROUP_ID = {Device.DeviceGroupID}";
 
             try
             {

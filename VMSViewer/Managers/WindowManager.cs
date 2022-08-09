@@ -30,12 +30,12 @@ namespace VMSViewer
         /// <summary>
         /// 그룹 생성/수정 윈도우
         /// </summary>
-        private EditClientGroupWindow EditClientGroupWindow = null;
+        private EditDeviceGroupWindow EditDeviceGroupWindow = null;
 
         /// <summary>
         /// 장치 생성/수정 윈도우
         /// </summary>
-        private EditClientWindow EditClientWindow = null;
+        private EditDeviceWindow EditDeviceWindow = null;
 
         public WindowManager()
         {
@@ -44,8 +44,8 @@ namespace VMSViewer
 
         public void AllWindowClose()
         {
-            if (EditClientWindow != null) EditClientWindow.Close();
-            if (EditClientGroupWindow != null) EditClientGroupWindow.Close();
+            if (EditDeviceWindow != null) EditDeviceWindow.Close();
+            if (EditDeviceGroupWindow != null) EditDeviceGroupWindow.Close();
         }
 
         #region LoginWindow
@@ -72,53 +72,53 @@ namespace VMSViewer
 
         #endregion
 
-        public void ShowEditClientGroupWindow(ClientGroup ClientGroup = null)
+        public void ShowEditDeviceGroupWindow(DeviceGroup DeviceGroup = null)
         {
-            if (DatabaseManager.Shared.IsOverCountClientGroup() == false)
+            if (DatabaseManager.Shared.IsOverCountDeviceGroup() == false)
             {
-                if (EditClientGroupWindow == null)
+                if (EditDeviceGroupWindow == null)
                 {
-                    EditClientGroupWindow = new EditClientGroupWindow(ClientGroup);
-                    EditClientGroupWindow.Closed += EditClientGroupWindow_Closed;
-                    EditClientGroupWindow.Show();
+                    EditDeviceGroupWindow = new EditDeviceGroupWindow(DeviceGroup);
+                    EditDeviceGroupWindow.Closed += EditDeviceGroupWindow_Closed;
+                    EditDeviceGroupWindow.Show();
                 }
             }
             else
                 System.Windows.MessageBox.Show("최대 그룹생성 개수는 50개입니다.", "오류", MessageBoxButton.OK, MessageBoxImage.Error);
         }
 
-        private void EditClientGroupWindow_Closed(object sender, EventArgs e)
+        private void EditDeviceGroupWindow_Closed(object sender, EventArgs e)
         {
-            if (EditClientGroupWindow != null)
+            if (EditDeviceGroupWindow != null)
             {
-                EditClientGroupWindow.Closed -= EditClientGroupWindow_Closed;
-                EditClientGroupWindow = null;
+                EditDeviceGroupWindow.Closed -= EditDeviceGroupWindow_Closed;
+                EditDeviceGroupWindow = null;
             }
 
             GC.Collect();
         }
 
-        public void ShowEditClientWindow(int ClientGroupID, Client Client = null)
+        public void ShowEditDeviceWindow(int DeviceGroupID, Device Device = null)
         {
-            if (DatabaseManager.Shared.IsOverCountClient(ClientGroupID) == false)
+            if (DatabaseManager.Shared.IsOverCountDevice(DeviceGroupID) == false)
             {
-                if (EditClientWindow == null)
+                if (EditDeviceWindow == null)
                 {
-                    EditClientWindow = new EditClientWindow(ClientGroupID, Client);
-                    EditClientWindow.Closed += EditClientWindow_Closed;
-                    EditClientWindow.Show();
+                    EditDeviceWindow = new EditDeviceWindow(DeviceGroupID, Device);
+                    EditDeviceWindow.Closed += EditDeviceWindow_Closed;
+                    EditDeviceWindow.Show();
                 }
             }
             else
                 System.Windows.MessageBox.Show("최대 그룹별 장치생성 개수는 50개입니다.", "오류", MessageBoxButton.OK, MessageBoxImage.Error);
         }
 
-        private void EditClientWindow_Closed(object sender, EventArgs e)
+        private void EditDeviceWindow_Closed(object sender, EventArgs e)
         {
-            if (EditClientWindow != null)
+            if (EditDeviceWindow != null)
             {
-                EditClientWindow.Closed -= EditClientWindow_Closed;
-                EditClientWindow = null;
+                EditDeviceWindow.Closed -= EditDeviceWindow_Closed;
+                EditDeviceWindow = null;
             }
 
             GC.Collect();

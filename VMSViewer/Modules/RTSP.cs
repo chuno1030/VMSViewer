@@ -19,7 +19,12 @@ namespace VMSViewer
         /// <summary>
         /// 클라이언트
         /// </summary>
-        private readonly Client Client;
+        private readonly Device Device;
+
+        /// <summary>
+        /// TRUE 시 전체화면에 영상표출
+        /// </summary>
+        public bool IsFullScreen = false;
 
         /// <summary>
         /// TRUE 시 카메라 끊기
@@ -41,9 +46,9 @@ namespace VMSViewer
         /// </summary>
         private System.Timers.Timer ConnectTimer = null;
 
-        public RTSP(Client Client)
+        public RTSP(Device Device)
         {
-            this.Client = Client;
+            this.Device = Device;
         }
 
         public void Dispose()
@@ -62,6 +67,7 @@ namespace VMSViewer
         public void ClearRTSP()
         {
             IsDisconnect = false;
+            IsFullScreen = false;
 
             if (ConnectTimer != null)
             {
@@ -107,7 +113,7 @@ namespace VMSViewer
             }
 
             if (VideoStreamDecoder == null) VideoStreamDecoder = new VideoStreamDecoder();
-            if (VideoStreamDecoder.Connect(Client.RTSPAddress))
+            if (VideoStreamDecoder.Connect(Device.RTSPAddress))
             {
                 if (onConnectionStatus != null) onConnectionStatus(ConnectionStatus.Connected);
                 return true;
@@ -125,7 +131,7 @@ namespace VMSViewer
         /// </summary>
         public void Disconnect()
         {
-            Console.WriteLine($"### 클라이언트 {Client.ClientID}번 카메라 연결해제 ###");
+            Console.WriteLine($"### 클라이언트 {Device.DeviceID}번 카메라 연결해제 ###");
             IsDisconnect = true;
         }
 
@@ -142,7 +148,7 @@ namespace VMSViewer
         /// </summary>
         public unsafe void Streaming()
         {
-            Console.WriteLine($"### 클라이언트 {Client.ClientID}번 카메라 연결..... -> {Client.RTSPAddress} ###");
+            Console.WriteLine($"### 클라이언트 {Device.DeviceID}번 카메라 연결..... -> {Device.RTSPAddress} ###");
 
             if(Connect())
             {

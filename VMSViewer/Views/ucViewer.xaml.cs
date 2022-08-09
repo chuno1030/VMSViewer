@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
 using VMSViewer.Module;
@@ -12,6 +13,11 @@ namespace VMSViewer
     /// </summary>
     public partial class ucViewer : UserControl
     {
+        /// <summary>
+        /// 장치
+        /// </summary>
+        private Device SelectedDevice;
+
         /// <summary>
         /// RTSP 스트리밍 
         /// </summary>
@@ -37,7 +43,7 @@ namespace VMSViewer
 
         private void UserControl_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            ClearClient();
+            ClearDevice();
         }
 
         /// <summary>
@@ -45,12 +51,12 @@ namespace VMSViewer
         /// </summary>
         private void UserControl_PreviewDrop(object sender, DragEventArgs e)
         {
-           if(e.Data.GetDataPresent("Client"))
+           if(e.Data.GetDataPresent("Device"))
            {
-                var client = e.Data.GetData("Client") as Client;
-                if (client == null) return;
+                var Device = e.Data.GetData("Device") as Device;
+                if (Device == null) return;
 
-                InitClient(client);
+                InitDevice(Device);
            }
         }
 
@@ -62,19 +68,21 @@ namespace VMSViewer
         /// <summary>
         /// 클라이언트 스트리밍
         /// </summary>
-        private void InitClient(Client Client)
+        private void InitDevice(Device Device)
         {
-            SetViewer(MoniterType.RTSP, Client);
+            SelectedDevice = Device;
+            SetViewer(MoniterType.RTSP, Device);
 
             if (RTSP == null)
             {
-                RTSP = new RTSP(Client);
+                RTSP = new RTSP(Device);
                 RTSP.onDisplayStream += RTSP_onDisplayStream;
                 RTSP.onConnectionStatus += RTSP_onConnectionStatus;
                 RTSP.InitRTSP();
             }
         }
-        private void ClearClient()
+
+        private void ClearDevice()
         {
             if (RTSP != null)
             {
@@ -109,9 +117,11 @@ namespace VMSViewer
                         break;
                     case ConnectionStatus.Connected:
                         txtConnectionStatus.Text = "[연결]";
+                        txtConnectionStatus.Foreground = Brushes.Green;
                         break;
                     case ConnectionStatus.Disconnected:
                         txtConnectionStatus.Text = "[연결실패]";
+                        txtConnectionStatus.Foreground = Brushes.Red;
                         break;
                 }
             }));
@@ -120,7 +130,7 @@ namespace VMSViewer
         /// <summary>
         /// 
         /// </summary>
-        private void SetViewer(MoniterType MoniterType, Client Client = null)
+        private void SetViewer(MoniterType MoniterType, Device Device = null)
         {
             imgBackGround.Visibility = Visibility.Hidden;
 
@@ -132,12 +142,12 @@ namespace VMSViewer
             switch (MoniterType)
             {
                 case MoniterType.NONE:
-                    txtClientName.Text = "";
+                    txtDeviceName.Text = "";
                     MoniterType = MoniterType.NONE;
                     imgBackGround.Visibility = Visibility.Visible;
                     break;
                 case MoniterType.RTSP:
-                    txtClientName.Text = Client.ClientName;
+                    txtDeviceName.Text = Device.DeviceName;
                     gridViewer.Visibility = Visibility.Visible;
                     imgViewer.Visibility = Visibility.Visible;
                     break;
@@ -149,6 +159,7 @@ namespace VMSViewer
         /// </summary>
         private void ClearViewer()
         {
+            SelectedDevice = null;
             imgViewer.Source = null;
             SetViewer(MoniterType.NONE);
         }
@@ -172,15 +183,42 @@ namespace VMSViewer
 
             switch (tag)
             {
-                case "GetClientInfo":
+                case "DeviceInfo":
+                    ShowDeviceInfo();
                     break;
                 case "FullScreen":
+                    ShowFullScreen();
                     break;
-                case "DeleteClient":
-                    if(RTSP != null)
-                        ClearClient();
+                case "DeleteDevice":
+                    DeleteDevice();
                     break;
             }
+        }
+
+        private void ShowDeviceInfo()
+        {
+            if (RTSP != null && RTSP.IsConnect())
+            {
+
+            }
+            else
+                MessageBox.Show("연결된 장치가 없습니다.", "장치정보", MessageBoxButton.OK, MessageBoxImage.Error);
+        }
+
+        private void ShowFullScreen()
+        {
+            if (RTSP != null && RTSP.IsConnect())
+            {
+                RTSP.IsFullScreen = true;
+            }
+            else
+                MessageBox.Show("연결된 장치가 없습니다.", "전체화면", MessageBoxButton.OK, MessageBoxImage.Error);
+        }
+
+        private void DeleteDevice()
+        {
+            if (RTSP != null)
+                ClearDevice();
         }
 
         private void UserControl_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)

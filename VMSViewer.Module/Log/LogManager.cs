@@ -26,7 +26,7 @@ namespace VMSViewer
             if (Directory.Exists(GetSaveDirectory()) == false)
                 Directory.CreateDirectory(GetSaveDirectory());
 
-            var log = $"{DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss")} ### {Log} ###";
+            var log = $"[{DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss")}] ### {Log} ###";
             var savePath = $"{GetSaveDirectory()}\\{GetFilename()}";
 
             Console.WriteLine(log);

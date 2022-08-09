@@ -2,38 +2,38 @@
 
 namespace VMSViewer
 {
-    public class Client
+    public class Device
     {
         /// <summary>
         /// 장치 ID
         /// </summary>
-        public int ClientID { get; set; }
+        public int DeviceID { get; set; }
 
         /// <summary>
         /// 장치그룹 ID
         /// </summary>
-        public int ClientGroupID { get; set; }
+        public int DeviceGroupID { get; set; }
 
         /// <summary>
         /// 장치명
         /// </summary>
-        public string ClientName { get; set; }
+        public string DeviceName { get; set; }
 
         /// <summary>
         /// 장치 IP
         /// </summary>
-        public string ClientIP { get; set; }
+        public string DeviceIP { get; set; }
 
         /// <summary>
         /// 장치 RTSP 주소
         /// </summary>
         public string RTSPAddress { get; set; }
 
-        public Client() { }
+        public Device() { }
 
-        public Client(int ClientGroupID)
+        public Device(int DeviceGroupID)
         {
-            this.ClientGroupID = ClientGroupID;
+            this.DeviceGroupID = DeviceGroupID;
         }
     }
 }

@@ -8,21 +8,21 @@ using VMSViewer.Module;
 namespace VMSViewer
 {
     /// <summary>
-    /// ClientList.xaml에 대한 상호 작용 논리
+    /// DeviceList.xaml에 대한 상호 작용 논리
     /// </summary>
-    public partial class ucClientList : UserControl
+    public partial class ucDeviceList : UserControl
     {
         /// <summary>
-        /// 장치리스트가 보여질 경우 TRUE
+        /// 장치리스트가 OPEN 시 TRUE
         /// </summary>
-        private bool IsOpenClientList = false;
+        public bool IsOpenDeviceList = false;
 
         /// <summary>
         /// 드래그할 컨트롤을 선택했을때
         /// </summary>
         private bool IsDrag = true;
 
-        public ucClientList()
+        public ucDeviceList()
         {
             InitializeComponent();
         }
@@ -31,159 +31,159 @@ namespace VMSViewer
         {
             InitProc();
 
-            EventManager.onAddClient += EventManager_onAddClient;
-            EventManager.onAddClientGroup += EventManager_onAddClientGroup;
-            EventManager.onRefreshClient += EventManager_onRefreshClient;
-            EventManager.onRefreshClientGroup += EventManager_onRefreshClientGroup;
+            EventManager.onRefreshDevice += EventManager_onRefreshDevice;
+            EventManager.onRefreshDeviceGroup += EventManager_onRefreshDeviceGroup;
+            EventManager.onAddDevice += EventManager_onAddDevice;
+            EventManager.onAddDeviceGroup += EventManager_onAddDeviceGroup;
         }
 
         private void InitProc()
         {
-            RefreshClientGroupList();
+            RefreshDeviceGroupList();
         }
 
-        private void EventManager_onAddClient(Client NewClient)
+        private void EventManager_onAddDevice(Device NewDevice)
         {
-            Expander TargetClientList = null;
-            ClientGroup TargetClientGroup = null;
+            Expander TargetDeviceList = null;
+            DeviceGroup TargetDeviceGroup = null;
 
-            foreach (UIElement item in spClientGroupList.Children)
+            foreach (UIElement item in spDeviceGroupList.Children)
             {
                 Expander expander = item as Expander;
 
                 if (expander == null) continue;
                 if (expander.Tag == null) continue;
 
-                ClientGroup ClientGroup = (ClientGroup)expander.Tag;
+                DeviceGroup DeviceGroup = (DeviceGroup)expander.Tag;
 
-                if (ClientGroup == null || ClientGroup is ClientGroup == false) continue;
-                if (ClientGroup.ClientGroupID != NewClient.ClientGroupID) continue;
+                if (DeviceGroup == null || DeviceGroup is DeviceGroup == false) continue;
+                if (DeviceGroup.DeviceGroupID != NewDevice.DeviceGroupID) continue;
 
-                TargetClientGroup = ClientGroup;
-                TargetClientList = expander;
+                TargetDeviceGroup = DeviceGroup;
+                TargetDeviceList = expander;
             }
 
-            if (TargetClientList == null || TargetClientGroup == null)
+            if (TargetDeviceList == null || TargetDeviceGroup == null)
             {
                 System.Windows.MessageBox.Show("생성에 실패했습니다.", "장치생성", MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
 
-            ListBox listBox = (ListBox)TargetClientList.Content;
+            ListBox listBox = (ListBox)TargetDeviceList.Content;
 
             if (listBox.Items.Count > 0) listBox.Items.Clear();
 
-            TargetClientList.Content = RefreshClientList(DatabaseManager.Shared.SELECT_TB_Client(TargetClientGroup));
+            TargetDeviceList.Content = RefreshDeviceList(DatabaseManager.Shared.SELECT_TB_Device(TargetDeviceGroup));
         }
 
-        private void EventManager_onAddClientGroup(ClientGroup NewClientGroup)
+        private void EventManager_onAddDeviceGroup(DeviceGroup NewDeviceGroup)
         {
-            RefreshClientGroupList();
+            RefreshDeviceGroupList();
 
-            //Expander expander = GetExpander(NewClientGroup);
+            //Expander expander = GetExpander(NewDeviceGroup);
 
             //if (expander != null)
-            //    spClientGroupList.Children.Add(expander);
+            //    spDeviceGroupList.Children.Add(expander);
             //else
             //    System.Windows.MessageBox.Show("생성에 실패했습니다.", "그룹생성", MessageBoxButton.OK, MessageBoxImage.Error);
         }
 
-        private void EventManager_onRefreshClient(Client RefreshClient = null)
+        private void EventManager_onRefreshDevice(Device RefreshDevice = null)
         {
-            ListBox TargetClientList = null;
-            ListBoxItem TargetClient = null;
+            ListBox TargetDeviceList = null;
+            ListBoxItem TargetDevice = null;
 
-            foreach (UIElement item in spClientGroupList.Children)
+            foreach (UIElement item in spDeviceGroupList.Children)
             {
                 Expander expander = item as Expander;
 
                 if (expander == null) continue;
                 if (expander.Tag == null) continue;
 
-                ClientGroup ClientGroup = (ClientGroup)expander.Tag;
+                DeviceGroup DeviceGroup = (DeviceGroup)expander.Tag;
 
-                if (ClientGroup == null || ClientGroup is ClientGroup == false) continue;
-                if (ClientGroup.ClientGroupID != RefreshClient.ClientGroupID) continue;
+                if (DeviceGroup == null || DeviceGroup is DeviceGroup == false) continue;
+                if (DeviceGroup.DeviceGroupID != RefreshDevice.DeviceGroupID) continue;
 
-                TargetClientList = (ListBox)expander.Content;
+                TargetDeviceList = (ListBox)expander.Content;
             }
 
-            if (TargetClientList == null)
+            if (TargetDeviceList == null)
             {
                 System.Windows.MessageBox.Show("편집에 실패했습니다.", "장치편집", MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
 
-            foreach (ListBoxItem item in TargetClientList.Items)
+            foreach (ListBoxItem item in TargetDeviceList.Items)
             {
                 if (item.Tag == null) continue;
-                if (item.Tag is Client == false) continue;
+                if (item.Tag is Device == false) continue;
 
-                Client client = (Client)item.Tag;
+                Device Device = (Device)item.Tag;
 
-                if (client == null) continue;
+                if (Device == null) continue;
 
-                if (client.ClientID != RefreshClient.ClientID) continue;
+                if (Device.DeviceID != RefreshDevice.DeviceID) continue;
 
-                TargetClient = item;
+                TargetDevice = item;
             }
 
-            if (TargetClient == null)
+            if (TargetDevice == null)
             {
                 System.Windows.MessageBox.Show("편집에 실패했습니다.", "장치편집", MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
 
-            TargetClient.Tag = RefreshClient;
-            TargetClient.Content = RefreshClient.ClientName;
+            TargetDevice.Tag = RefreshDevice;
+            TargetDevice.Content = RefreshDevice.DeviceName;
         }
 
-        private void EventManager_onRefreshClientGroup(ClientGroup RefreshClientGroup)
+        private void EventManager_onRefreshDeviceGroup(DeviceGroup RefreshDeviceGroup)
         {
             Expander RefreshExpander = null;
 
-            foreach (UIElement item in spClientGroupList.Children)
+            foreach (UIElement item in spDeviceGroupList.Children)
             {
                 Expander expander = item as Expander;
 
                 if (expander == null) continue;
                 if (expander.Tag == null) continue;
-                if (RefreshClientGroup == null) continue;
+                if (RefreshDeviceGroup == null) continue;
 
-                ClientGroup ClientGroup = (ClientGroup)expander.Tag;
+                DeviceGroup DeviceGroup = (DeviceGroup)expander.Tag;
 
-                if (ClientGroup == null || ClientGroup is ClientGroup == false) continue;
-                if (RefreshClientGroup.ClientGroupID != ClientGroup.ClientGroupID) continue;
+                if (DeviceGroup == null || DeviceGroup is DeviceGroup == false) continue;
+                if (RefreshDeviceGroup.DeviceGroupID != DeviceGroup.DeviceGroupID) continue;
 
                 RefreshExpander = expander;
             }
 
-            RefreshExpander.Tag = RefreshClientGroup;
-            RefreshExpander.Header = RefreshClientGroup.ClientGroupName.Trim();
+            RefreshExpander.Tag = RefreshDeviceGroup;
+            RefreshExpander.Header = RefreshDeviceGroup.DeviceGroupName.Trim();
         }
 
-        private Expander GetExpander(ClientGroup ClientGroup)
+        private Expander GetExpander(DeviceGroup DeviceGroup)
         {
-            if (ClientGroup == null) return null;
+            if (DeviceGroup == null) return null;
 
             var expander = new Expander();
 
-            expander.Tag = ClientGroup;
-            expander.Header = ClientGroup.ClientGroupName;
+            expander.Tag = DeviceGroup;
+            expander.Header = DeviceGroup.DeviceGroupName;
             expander.ContextMenu = new ContextMenu();
 
             var menuItem1 = new MenuItem();
-            menuItem1.Tag = ClientGroup;
+            menuItem1.Tag = DeviceGroup;
             menuItem1.Header = "장치생성";
-            menuItem1.Click += Expander_MenuItem_AddClient_Click;
+            menuItem1.Click += Expander_MenuItem_AddDevice_Click;
 
             var menuItem2 = new MenuItem();
-            menuItem2.Tag = ClientGroup;
+            menuItem2.Tag = DeviceGroup;
             menuItem2.Header = "그룹편집";
             menuItem2.Click += Expander_MenuItem_Edit_Click;
 
             var menuItem3 = new MenuItem();
-            menuItem3.Tag = ClientGroup;
+            menuItem3.Tag = DeviceGroup;
             menuItem3.Header = "그룹삭제";
             menuItem3.Click += Expander_MenuItem_Remove_Click;
 
@@ -195,18 +195,18 @@ namespace VMSViewer
             return expander;
         }
 
-        private ListBoxItem GetListBoxItem(Client Client)
+        private ListBoxItem GetListBoxItem(Device Device)
         {
-            if (Client == null) return null;
+            if (Device == null) return null;
 
-            var listBoxItem = new ListBoxItem() { Content = Client.ClientName, Tag = Client };
+            var listBoxItem = new ListBoxItem() { Content = Device.DeviceName, Tag = Device };
             listBoxItem.ContextMenu = new ContextMenu();
 
-            var menuItem1 = new MenuItem() { Header = "장치편집", Tag = Client };
-            menuItem1.Click += Client_MenuItem_Edit_Click;
+            var menuItem1 = new MenuItem() { Header = "장치편집", Tag = Device };
+            menuItem1.Click += Device_MenuItem_Edit_Click;
 
-            var menuItem2 = new MenuItem() { Header = "장치삭제", Tag = Client };
-            menuItem2.Click += Client_MenuItem_Remove_Click;
+            var menuItem2 = new MenuItem() { Header = "장치삭제", Tag = Device };
+            menuItem2.Click += Device_MenuItem_Remove_Click;
 
             listBoxItem.ContextMenu.Items.Add(menuItem1);
             listBoxItem.ContextMenu.Items.Add(menuItem2);
@@ -225,11 +225,11 @@ namespace VMSViewer
 
                 if (listboxItem == null) return;
                 if (listboxItem.Tag == null) return;
-                if (listboxItem.Tag is Client == false) return;
+                if (listboxItem.Tag is Device == false) return;
 
-                var client = (Client)listboxItem.Tag;
+                var Device = (Device)listboxItem.Tag;
 
-                var dataObject = new DataObject("Client", client);
+                var dataObject = new DataObject("Device", Device);
                 DragDrop.DoDragDrop(listboxItem, dataObject, DragDropEffects.Move);
             }
         }
@@ -241,7 +241,7 @@ namespace VMSViewer
 
         private void ClearList()
         {
-            foreach (UIElement item in spClientGroupList.Children)
+            foreach (UIElement item in spDeviceGroupList.Children)
             {
                 Expander expander = item as Expander;
 
@@ -255,52 +255,52 @@ namespace VMSViewer
                 listBox.Items.Clear();
             }
 
-            spClientGroupList.Children.Clear();
+            spDeviceGroupList.Children.Clear();
         }
 
         /// <summary>
         /// 그룹리스트 불러오기
         /// </summary>
-        private void RefreshClientGroupList()
+        private void RefreshDeviceGroupList()
         {
             ClearList();
 
-            List<ClientGroup> ClientGroupList = DatabaseManager.Shared.SELECT_TB_ClientGroup();
+            List<DeviceGroup> DeviceGroupList = DatabaseManager.Shared.SELECT_TB_DeviceGroup();
 
-            //ClientGroup clientGroup1 = new ClientGroup();
-            //clientGroup1.ClientGroupID = 1;
-            //clientGroup1.ClientGroupName = "MariaDB";
+            //DeviceGroup DeviceGroup1 = new DeviceGroup();
+            //DeviceGroup1.DeviceGroupID = 1;
+            //DeviceGroup1.DeviceGroupName = "MariaDB";
 
-            //List<ClientGroup> ClientGroupList = new List<ClientGroup>();
+            //List<DeviceGroup> DeviceGroupList = new List<DeviceGroup>();
 
-            //ClientGroupList.Add(clientGroup1);
+            //DeviceGroupList.Add(DeviceGroup1);
 
-            if (ClientGroupList == null || ClientGroupList.Count < 0) return;
+            if (DeviceGroupList == null || DeviceGroupList.Count < 0) return;
 
-            foreach (var ClientGroup in ClientGroupList)
+            foreach (var DeviceGroup in DeviceGroupList)
             {
-                if (ClientGroup == null) continue;
+                if (DeviceGroup == null) continue;
 
-                Expander expander = GetExpander(ClientGroup);
+                Expander expander = GetExpander(DeviceGroup);
 
                 if (expander == null) continue;
 
-                expander.Content = RefreshClientList(DatabaseManager.Shared.SELECT_TB_Client(ClientGroup));
-                spClientGroupList.Children.Add(expander);
+                expander.Content = RefreshDeviceList(DatabaseManager.Shared.SELECT_TB_Device(DeviceGroup));
+                spDeviceGroupList.Children.Add(expander);
             }
         }
 
-        private ListBox RefreshClientList(List<Client> ClientList)
+        private ListBox RefreshDeviceList(List<Device> DeviceList)
         {
             ListBox listBox = new ListBox();
             listBox.AllowDrop = true;
             listBox.ContextMenu = new ContextMenu();
 
-            foreach (var Client in ClientList)
+            foreach (var Device in DeviceList)
             {
-                if (Client == null) continue;
+                if (Device == null) continue;
 
-                ListBoxItem listBoxItem = GetListBoxItem(Client);
+                ListBoxItem listBoxItem = GetListBoxItem(Device);
 
                 if (listBoxItem == null) continue;
 
@@ -312,19 +312,19 @@ namespace VMSViewer
 
         private void MenuItem_Click(object sender, RoutedEventArgs e)
         {
-            WindowManager.Shared.ShowEditClientGroupWindow();
+            WindowManager.Shared.ShowEditDeviceGroupWindow();
         }
 
-        private void Expander_MenuItem_AddClient_Click(object sender, RoutedEventArgs e)
+        private void Expander_MenuItem_AddDevice_Click(object sender, RoutedEventArgs e)
         {
             MenuItem menuItem = sender as MenuItem;
 
             if (menuItem == null) return;
             if (menuItem.Tag == null) return;
 
-            ClientGroup ClientGroup = (ClientGroup)menuItem.Tag;
+            DeviceGroup DeviceGroup = (DeviceGroup)menuItem.Tag;
 
-            WindowManager.Shared.ShowEditClientWindow(ClientGroup.ClientGroupID);
+            WindowManager.Shared.ShowEditDeviceWindow(DeviceGroup.DeviceGroupID);
         }
 
         private void Expander_MenuItem_Edit_Click(object sender, RoutedEventArgs e)
@@ -334,9 +334,9 @@ namespace VMSViewer
             if (menuItem == null) return;
             if (menuItem.Tag == null) return;
 
-            ClientGroup EditClientGroup = (ClientGroup)menuItem.Tag;
+            DeviceGroup EditDeviceGroup = (DeviceGroup)menuItem.Tag;
 
-            WindowManager.Shared.ShowEditClientGroupWindow(EditClientGroup);
+            WindowManager.Shared.ShowEditDeviceGroupWindow(EditDeviceGroup);
         }
 
         private void Expander_MenuItem_Remove_Click(object sender, RoutedEventArgs e)
@@ -348,35 +348,35 @@ namespace VMSViewer
                 if (menuItem == null) return;
                 if (menuItem.Tag == null) return;
 
-                ClientGroup RemoveClientGroup = (ClientGroup)menuItem.Tag;
+                DeviceGroup RemoveDeviceGroup = (DeviceGroup)menuItem.Tag;
 
-                RemoveGroupList(RemoveClientGroup);
+                RemoveGroupList(RemoveDeviceGroup);
             }
         }
 
-        private void Client_MenuItem_Edit_Click(object sender, EventArgs e)
+        private void Device_MenuItem_Edit_Click(object sender, EventArgs e)
         {
             MenuItem menuItem = sender as MenuItem;
 
             if (menuItem == null) return;
             if (menuItem.Tag == null) return;
 
-            Client EditClient = (Client)menuItem.Tag;
+            Device EditDevice = (Device)menuItem.Tag;
 
-            WindowManager.Shared.ShowEditClientWindow(EditClient.ClientGroupID, EditClient);
+            WindowManager.Shared.ShowEditDeviceWindow(EditDevice.DeviceGroupID, EditDevice);
         }
 
-        private void Client_MenuItem_Remove_Click(object sender, EventArgs e)
+        private void Device_MenuItem_Remove_Click(object sender, EventArgs e)
         {
             MenuItem menuItem = sender as MenuItem;
 
             if (menuItem == null) return;
             if (menuItem.Tag == null) return;
 
-            Client RemoveClient = (Client)menuItem.Tag;
+            Device RemoveDevice = (Device)menuItem.Tag;
 
-            if (DatabaseManager.Shared.DELETE_TB_Client(RemoveClient))
-                RemoveClientList(RemoveClient);
+            if (DatabaseManager.Shared.DELETE_TB_Device(RemoveDevice))
+                RemoveDeviceList(RemoveDevice);
             else
                 System.Windows.MessageBox.Show("삭제에 실패했습니다.", "장치삭제", MessageBoxButton.OK, MessageBoxImage.Error);
         }
@@ -384,84 +384,84 @@ namespace VMSViewer
         /// <summary>
         /// 그룹삭제
         /// </summary>
-        private void RemoveGroupList(ClientGroup RemoveClientGroup)
+        private void RemoveGroupList(DeviceGroup RemoveDeviceGroup)
         {
             Expander RemoveExpander = null;
 
-            foreach (UIElement item in spClientGroupList.Children)
+            foreach (UIElement item in spDeviceGroupList.Children)
             {
                 Expander expander = item as Expander;
 
                 if (expander == null) continue;
                 if (expander.Tag == null) continue;
 
-                ClientGroup ClientGroup = (ClientGroup)expander.Tag;
+                DeviceGroup DeviceGroup = (DeviceGroup)expander.Tag;
 
-                if (ClientGroup == null || ClientGroup is ClientGroup == false) continue;
-                if (RemoveClientGroup.ClientGroupID != ClientGroup.ClientGroupID) continue;
+                if (DeviceGroup == null || DeviceGroup is DeviceGroup == false) continue;
+                if (RemoveDeviceGroup.DeviceGroupID != DeviceGroup.DeviceGroupID) continue;
 
                 RemoveExpander = expander;
             }
 
-            if (DatabaseManager.Shared.DELETE_TB_ClientGroup((ClientGroup)RemoveExpander.Tag) && DatabaseManager.Shared.ALL_DELETE_TB_Client((ClientGroup)RemoveExpander.Tag))
+            if (DatabaseManager.Shared.DELETE_TB_DeviceGroup((DeviceGroup)RemoveExpander.Tag) && DatabaseManager.Shared.ALL_DELETE_TB_Device((DeviceGroup)RemoveExpander.Tag))
             {
                 ListBox listbox = (ListBox)RemoveExpander.Content;
 
                 if (listbox != null && listbox.Items.Count > 0) listbox.Items.Clear();
 
-                spClientGroupList.Children.Remove(RemoveExpander);
+                spDeviceGroupList.Children.Remove(RemoveExpander);
             }
             else
                 System.Windows.MessageBox.Show("삭제에 실패했습니다.", "그룹삭제", MessageBoxButton.OK, MessageBoxImage.Error);
         }
 
-        private void RemoveClientList(Client RemoveClient)
+        private void RemoveDeviceList(Device RemoveDevice)
         {
-            ListBox TargetClientList = null;
-            ListBoxItem TargetClient = null;
+            ListBox TargetDeviceList = null;
+            ListBoxItem TargetDevice = null;
 
-            foreach (UIElement item in spClientGroupList.Children)
+            foreach (UIElement item in spDeviceGroupList.Children)
             {
                 Expander expander = item as Expander;
 
                 if (expander == null) continue;
                 if (expander.Tag == null) continue;
 
-                ClientGroup ClientGroup = (ClientGroup)expander.Tag;
+                DeviceGroup DeviceGroup = (DeviceGroup)expander.Tag;
 
-                if (ClientGroup == null || ClientGroup is ClientGroup == false) continue;
-                if (ClientGroup.ClientGroupID != RemoveClient.ClientGroupID) continue;
+                if (DeviceGroup == null || DeviceGroup is DeviceGroup == false) continue;
+                if (DeviceGroup.DeviceGroupID != RemoveDevice.DeviceGroupID) continue;
 
-                TargetClientList = (ListBox)expander.Content;
+                TargetDeviceList = (ListBox)expander.Content;
             }
 
-            if (TargetClientList == null)
+            if (TargetDeviceList == null)
             {
                 System.Windows.MessageBox.Show("삭제에 실패했습니다.", "장치삭제", MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
 
-            foreach (ListBoxItem item in TargetClientList.Items)
+            foreach (ListBoxItem item in TargetDeviceList.Items)
             {
                 if (item.Tag == null) continue;
-                if (item.Tag is Client == false) continue;
+                if (item.Tag is Device == false) continue;
 
-                Client client = (Client)item.Tag;
+                Device Device = (Device)item.Tag;
 
-                if (client == null) continue;
+                if (Device == null) continue;
 
-                if (client.ClientID != RemoveClient.ClientID) continue;
+                if (Device.DeviceID != RemoveDevice.DeviceID) continue;
 
-                TargetClient = item;
+                TargetDevice = item;
             }
 
-            if (TargetClient == null)
+            if (TargetDevice == null)
             {
                 System.Windows.MessageBox.Show("삭제에 실패했습니다.", "장치삭제", MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
 
-            TargetClientList.Items.Remove(TargetClient);
+            TargetDeviceList.Items.Remove(TargetDevice);
         }
     }
 }

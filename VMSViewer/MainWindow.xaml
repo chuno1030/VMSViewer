@@ -10,6 +10,24 @@
         ResizeMode="CanResizeWithGrip"
         Loaded="Window_Loaded" Closing="Window_Closing"
         Background="{DynamicResource BackGround_Color}">
+    <Window.Resources>
+        <Storyboard x:Key="OpenDeviceList">
+            <ThicknessAnimation Storyboard.TargetName="ucDeviceList"
+                                Storyboard.TargetProperty="Margin"
+                                From="-250,0,0,0"
+                                To="0,0,0,0"
+                                Duration="0:0:0.3"/>
+        </Storyboard>
+
+        <Storyboard x:Key="CloseDeviceList">
+            <ThicknessAnimation Storyboard.TargetName="ucDeviceList"
+                                Storyboard.TargetProperty="Margin"
+                                From="0,0,0,0"
+                                To="-250,0,0,0"
+                                Duration="0:0:0.3"/>
+        </Storyboard>
+    </Window.Resources>
+    
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="30"/>
@@ -35,17 +53,29 @@
                         Width="30"
                         Height="25"
                         Click="btnClick"/>
+
+                <Button x:Name="btnDevice"
+                        Tag="4"
+                        Width="30"
+                        Height="25"
+                        Click="btnDeviceClick"/>
             </StackPanel>
         </Grid>
 
         <Grid Grid.Row="1" x:Name="mainGrid">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="250"/>
-                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
 
-            <local:ucClientList Grid.Column="0" />
-            <local:ucGridViewer Grid.Column="1"/>
+            <local:ucDeviceList x:Name="ucDeviceList"
+                                Grid.Column="0"
+                                HorizontalAlignment="Left"
+                                Width="250"
+                                Margin="-250,0,0,0"/>
+
+            <local:ucGridViewer x:Name="ucGridViewer"
+                                Grid.Column="1"/>
         </Grid>
     </Grid>
 </Window>

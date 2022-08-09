@@ -6,34 +6,34 @@ using VMSViewer.Module;
 namespace VMSViewer
 {
     /// <summary>
-    /// EditClientWindow.xaml에 대한 상호 작용 논리
+    /// EditDeviceWindow.xaml에 대한 상호 작용 논리
     /// </summary>
-    public partial class EditClientWindow : Window
+    public partial class EditDeviceWindow : Window
     {
         /// <summary>
-        /// Client 변수가 NULL 아니고, ClientID가 0보다 클 시 TRUE
+        /// Device 변수가 NULL 아니고, DeviceID가 0보다 클 시 TRUE
         /// </summary>
         private readonly bool IsEdit;
 
         /// <summary>
         /// 등록/수정의 그룹 ID
         /// </summary>
-        private readonly int ClientGroupID;
+        private readonly int DeviceGroupID;
 
         /// <summary>
-        /// 수정 시 사용할 Client
+        /// 수정 시 사용할 Device
         /// </summary>
-        private Client Client { get; }
+        private Device Device { get; }
 
-        public EditClientWindow(int ClientGroupID, Client Client = null)
+        public EditDeviceWindow(int DeviceGroupID, Device Device = null)
         {
             InitializeComponent();
 
-            this.ClientGroupID = ClientGroupID;
+            this.DeviceGroupID = DeviceGroupID;
 
-            if(Client != null)
+            if(Device != null)
             {
-                this.Client = Client;
+                this.Device = Device;
                 IsEdit = true;
             }
         }
@@ -52,7 +52,7 @@ namespace VMSViewer
         {
             if (IsEdit)
             {
-                if (Client != null && ClientGroupID != Client.ClientGroupID)
+                if (Device != null && DeviceGroupID != Device.DeviceGroupID)
                 { 
                     System.Windows.MessageBox.Show("장치그룹ID와 장치ID가 일치하지 않습니다.", "장치수정", MessageBoxButton.OK, MessageBoxImage.Error);
                     this.Close();
@@ -60,9 +60,9 @@ namespace VMSViewer
 
                 this.Title = "장치수정";
 
-                txtClientName.Text = Client.ClientName.Trim();
-                txtClientIP.Text = Client.ClientIP.Trim();
-                txtRTSPAddress.Text = Client.RTSPAddress.Trim();
+                txtDeviceName.Text = Device.DeviceName.Trim();
+                txtDeviceIP.Text = Device.DeviceIP.Trim();
+                txtRTSPAddress.Text = Device.RTSPAddress.Trim();
             }
             else 
                 this.Title = "장치생성";
@@ -72,16 +72,16 @@ namespace VMSViewer
         {
             if (IsEdit)
             {
-                Client EditClient = Client;
-                EditClient.ClientIP = txtClientIP.Text.Trim();
-                EditClient.ClientName = txtClientName.Text.Trim();
-                EditClient.RTSPAddress = txtRTSPAddress.Text.Trim();
+                Device EditDevice = Device;
+                EditDevice.DeviceIP = txtDeviceIP.Text.Trim();
+                EditDevice.DeviceName = txtDeviceName.Text.Trim();
+                EditDevice.RTSPAddress = txtRTSPAddress.Text.Trim();
 
-                if (DatabaseManager.Shared.IsUseClientName(IsEdit, EditClient) == false)
+                if (DatabaseManager.Shared.IsUseDeviceName(IsEdit, EditDevice) == false)
                 {
-                    if (DatabaseManager.Shared.UPDATE_TB_Client(EditClient))
+                    if (DatabaseManager.Shared.UPDATE_TB_Device(EditDevice))
                     {
-                        EventManager.RefreshClientEvent(EditClient);
+                        EventManager.RefreshDeviceEvent(EditDevice);
                         this.Close();
                     }
                     else
@@ -92,16 +92,16 @@ namespace VMSViewer
             }
             else
             {
-                Client NewClient = new Client(this.ClientGroupID);
-                NewClient.ClientIP = txtClientIP.Text.Trim();
-                NewClient.ClientName = txtClientName.Text.Trim();
-                NewClient.RTSPAddress = txtRTSPAddress.Text.Trim();
+                Device NewDevice = new Device(this.DeviceGroupID);
+                NewDevice.DeviceIP = txtDeviceIP.Text.Trim();
+                NewDevice.DeviceName = txtDeviceName.Text.Trim();
+                NewDevice.RTSPAddress = txtRTSPAddress.Text.Trim();
 
-                if(DatabaseManager.Shared.IsUseClientName(IsEdit, NewClient) == false)
+                if(DatabaseManager.Shared.IsUseDeviceName(IsEdit, NewDevice) == false)
                 {
-                    if (DatabaseManager.Shared.INSERT_TB_Client(NewClient))
+                    if (DatabaseManager.Shared.INSERT_TB_Device(NewDevice))
                     {
-                        EventManager.AddClientEvent(NewClient);
+                        EventManager.AddDeviceEvent(NewDevice);
                         this.Close();
                     }
                     else

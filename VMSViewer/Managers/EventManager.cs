@@ -5,43 +5,43 @@ namespace VMSViewer
     public class EventManager
     {
         /// <summary>
-        /// 그룹 등록 시
+        /// 그룹등록 이벤트
         /// </summary>
-        public delegate void AddClientGroupDelegate(ClientGroup NewClientGroup);
-        public static event AddClientGroupDelegate onAddClientGroup;
-        public static void AddClientGroupEvent(ClientGroup NewClientGroup)
+        public delegate void AddDeviceGroupDelegate(DeviceGroup NewDeviceGroup);
+        public static event AddDeviceGroupDelegate onAddDeviceGroup;
+        public static void AddDeviceGroupEvent(DeviceGroup NewDeviceGroup)
         {
-            if (onAddClientGroup != null) onAddClientGroup(NewClientGroup);
+            if (onAddDeviceGroup != null) onAddDeviceGroup(NewDeviceGroup);
         }
 
         /// <summary>
-        /// 그룹 수정 시
+        /// 그룹수정 이벤트
         /// </summary>
-        public delegate void RefreshClientGroupDelegate(ClientGroup RefreshClientGroup = null);
-        public static event RefreshClientGroupDelegate onRefreshClientGroup;
-        public static void RefreshClientGroupEvent(ClientGroup RefreshClientGroup = null)
+        public delegate void RefreshDeviceGroupDelegate(DeviceGroup RefreshDeviceGroup = null);
+        public static event RefreshDeviceGroupDelegate onRefreshDeviceGroup;
+        public static void RefreshDeviceGroupEvent(DeviceGroup RefreshDeviceGroup = null)
         {
-            if (onRefreshClientGroup != null) onRefreshClientGroup(RefreshClientGroup);
+            if (onRefreshDeviceGroup != null) onRefreshDeviceGroup(RefreshDeviceGroup);
         }
 
         /// <summary>
-        /// 장치 등록 시
+        /// 장치등록 이벤트
         /// </summary>
-        public delegate void AddClientDelegate(Client NewClient);
-        public static event AddClientDelegate onAddClient;
-        public static void AddClientEvent(Client NewClient)
+        public delegate void AddDeviceDelegate(Device NewDevice);
+        public static event AddDeviceDelegate onAddDevice;
+        public static void AddDeviceEvent(Device NewDevice)
         {
-            if (onAddClient != null) onAddClient(NewClient);
+            if (onAddDevice != null) onAddDevice(NewDevice);
         }
 
         /// <summary>
-        /// 장치 수정 시
+        /// 장치수정 이벤트
         /// </summary>
-        public delegate void RefreshClientDelegate(Client RefreshClient = null);
-        public static event RefreshClientDelegate onRefreshClient;
-        public static void RefreshClientEvent(Client RefreshClient = null)
+        public delegate void RefreshDeviceDelegate(Device RefreshDevice = null);
+        public static event RefreshDeviceDelegate onRefreshDevice;
+        public static void RefreshDeviceEvent(Device RefreshDevice = null)
         {
-            if (onRefreshClient != null) onRefreshClient(RefreshClient);
+            if (onRefreshDevice != null) onRefreshDevice(RefreshDevice);
         }
     }
 }

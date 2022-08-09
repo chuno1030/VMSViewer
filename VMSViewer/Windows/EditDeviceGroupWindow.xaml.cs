@@ -6,27 +6,27 @@ using VMSViewer.Module;
 namespace VMSViewer
 {
     /// <summary>
-    /// EditClientGroupWindow.xaml에 대한 상호 작용 논리
+    /// EditDeviceGroupWindow.xaml에 대한 상호 작용 논리
     /// </summary>
-    public partial class EditClientGroupWindow : Window
+    public partial class EditDeviceGroupWindow : Window
     {
         /// <summary>
-        /// ClientGroup 변수가 NULL 아니고, GroupID가 0보다 클 시 TRUE
+        /// DeviceGroup 변수가 NULL 아니고, GroupID가 0보다 클 시 TRUE
         /// </summary>
         private readonly bool IsEdit;
 
         /// <summary>
-        /// 수정 시 사용할 ClientGroup
+        /// 수정 시 사용할 DeviceGroup
         /// </summary>
-        private ClientGroup ClientGroup { get; }
+        private DeviceGroup DeviceGroup { get; }
 
-        public EditClientGroupWindow(ClientGroup ClientGroup)
+        public EditDeviceGroupWindow(DeviceGroup DeviceGroup)
         {
             InitializeComponent();
 
-            if (ClientGroup != null && ClientGroup.ClientGroupID > 0)
+            if (DeviceGroup != null && DeviceGroup.DeviceGroupID > 0)
             {
-                this.ClientGroup = ClientGroup;
+                this.DeviceGroup = DeviceGroup;
                 IsEdit = true;
             }
         }
@@ -46,7 +46,7 @@ namespace VMSViewer
             if (IsEdit)
             {
                 this.Title = "그룹수정";
-                txtGroupName.Text = ClientGroup.ClientGroupName.Trim();
+                txtGroupName.Text = DeviceGroup.DeviceGroupName.Trim();
             }
             else
                 this.Title = "그룹생성";
@@ -57,13 +57,13 @@ namespace VMSViewer
 
             if(IsEdit)
             {
-                ClientGroup EditClientGroup = ClientGroup;
-                EditClientGroup.ClientGroupName = txtGroupName.Text.Trim();
+                DeviceGroup EditDeviceGroup = DeviceGroup;
+                EditDeviceGroup.DeviceGroupName = txtGroupName.Text.Trim();
 
-                if(DatabaseManager.Shared.IsUseClientGroupName(IsEdit, EditClientGroup) == false)
+                if(DatabaseManager.Shared.IsUseDeviceGroupName(IsEdit, EditDeviceGroup) == false)
                 {
-                    if (DatabaseManager.Shared.UPDATE_TB_ClientGroup(EditClientGroup))
-                        EventManager.RefreshClientGroupEvent(EditClientGroup);
+                    if (DatabaseManager.Shared.UPDATE_TB_DeviceGroup(EditDeviceGroup))
+                        EventManager.RefreshDeviceGroupEvent(EditDeviceGroup);
                     else
                         System.Windows.MessageBox.Show("수정에 실패했습니다.", "그룹수정", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
@@ -72,13 +72,13 @@ namespace VMSViewer
             }
             else
             {
-                ClientGroup NewClientGroup = new ClientGroup();
-                NewClientGroup.ClientGroupName = txtGroupName.Text.Trim();
+                DeviceGroup NewDeviceGroup = new DeviceGroup();
+                NewDeviceGroup.DeviceGroupName = txtGroupName.Text.Trim();
 
-                if (DatabaseManager.Shared.IsUseClientGroupName(IsEdit, NewClientGroup) == false)
+                if (DatabaseManager.Shared.IsUseDeviceGroupName(IsEdit, NewDeviceGroup) == false)
                 {
-                    if (DatabaseManager.Shared.INSERT_TB_ClientGroup(NewClientGroup))
-                        EventManager.AddClientGroupEvent(NewClientGroup);
+                    if (DatabaseManager.Shared.INSERT_TB_DeviceGroup(NewDeviceGroup))
+                        EventManager.AddDeviceGroupEvent(NewDeviceGroup);
                     else
                         System.Windows.MessageBox.Show("생성에 실패했습니다.", "그룹생성", MessageBoxButton.OK, MessageBoxImage.Error);
                 }

@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Windows;
-using System.Windows.Media;
+using System.Windows.Input;
 using System.Windows.Controls;
+using System.Windows.Media;
+using System.Windows.Media.Animation;
 
 using VMSViewer.Module;
-using System.Windows.Input;
 
 namespace VMSViewer
 {
@@ -44,6 +45,8 @@ namespace VMSViewer
 
         private void InitProc()
         {
+            ucDeviceList.IsOpenDeviceList = false;
+
             OriginalWidth = this.Width;
             OriginalHeight = this.Height;
 
@@ -55,7 +58,7 @@ namespace VMSViewer
 
         private void DoFinal()
         {
-            LogManager.Shared.AddLog("### 프로그램 종료 ###");
+            LogManager.Shared.AddLog("프로그램 종료");
         }
 
         private void ChangeSize(double width, double height)
@@ -117,6 +120,15 @@ namespace VMSViewer
                 case TitleBarButtonType.Close:
                     this.Close();
                     break;
+            }
+        }
+
+        private void btnDeviceClick(object sender, RoutedEventArgs e)
+        {
+            if(this.FindResource(ucDeviceList.IsOpenDeviceList == false ? "OpenDeviceList" : "CloseDeviceList") is Storyboard sb)
+            {
+                ucDeviceList.IsOpenDeviceList = !ucDeviceList.IsOpenDeviceList;
+                BeginStoryboard(sb); 
             }
         }
     }

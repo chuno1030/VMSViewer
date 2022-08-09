@@ -1,21 +1,20 @@
 ﻿using System;
 
-
 namespace VMSViewer
 {
-    public class ClientGroup
+    public class DeviceGroup
     {
         /// <summary>
         /// 장치그룹 ID
         /// </summary>
-        public int ClientGroupID { get; set; }
+        public int DeviceGroupID { get; set; }
 
         /// <summary>
         /// 장치그룹명
         /// </summary>
-        public string ClientGroupName { get; set; }
+        public string DeviceGroupName { get; set; }
 
-        public ClientGroup()
+        public DeviceGroup()
         {
         }
     }

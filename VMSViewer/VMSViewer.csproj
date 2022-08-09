@@ -76,17 +76,20 @@
     <Compile Include="Views\ucClientList.xaml.cs">
       <DependentUpon>ucClientList.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\ucFullScreen.xaml.cs">
+      <DependentUpon>ucFullScreen.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\ucGridViewer.xaml.cs">
       <DependentUpon>ucGridViewer.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\ucViewer.xaml.cs">
       <DependentUpon>ucViewer.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Windows\EditClientGroupWindow.xaml.cs">
-      <DependentUpon>EditClientGroupWindow.xaml</DependentUpon>
+    <Compile Include="Windows\EditDeviceGroupWindow.xaml.cs">
+      <DependentUpon>EditDeviceGroupWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Windows\EditClientWindow.xaml.cs">
-      <DependentUpon>EditClientWindow.xaml</DependentUpon>
+    <Compile Include="Windows\EditDeviceWindow.xaml.cs">
+      <DependentUpon>EditDeviceWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Windows\LoginWindow.xaml.cs">
       <DependentUpon>LoginWindow.xaml</DependentUpon>
@@ -107,6 +110,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\ucFullScreen.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\ucGridViewer.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -115,11 +122,11 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Windows\EditClientGroupWindow.xaml">
+    <Page Include="Windows\EditDeviceGroupWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Windows\EditClientWindow.xaml">
+    <Page Include="Windows\EditDeviceWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
